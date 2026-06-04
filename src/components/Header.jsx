@@ -8,14 +8,14 @@ const Header = () => {
   return (
     <header style={styles.header}>
       <button style={styles.iconButton} onClick={() => console.log('Open Settings')}>
-        <Settings size={22} color="var(--text)" strokeWidth={2.5} />
+        <Settings size={22} color="var(--text)" strokeWidth={2.2} />
       </button>
 
       <button style={styles.iconButton} onClick={toggleTheme}>
         {theme === 'light' ? (
-          <Sun size={22} color="var(--accent-2)" style={styles.sunIcon} strokeWidth={2.5} />
+          <Sun size={22} color="var(--accent-2)" style={styles.sunIcon} strokeWidth={2.2} />
         ) : (
-          <Moon size={22} color="var(--accent)" style={styles.moonIcon} strokeWidth={2.5} />
+          <Moon size={22} color="var(--accent)" style={styles.moonIcon} strokeWidth={2.2} />
         )}
       </button>
     </header>
@@ -32,20 +32,26 @@ const styles = {
     top: 0,
     backgroundColor: 'transparent',
     zIndex: 100,
+    pointerEvents: 'none', // Чтобы заголовок не мешал кликам по контенту под ним (кнопки переопределят это)
   },
   iconButton: {
-    width: '44px',
-    height: '44px',
-    borderRadius: '22px',
-    backgroundColor: 'var(--surface-2)',
-    backdropFilter: 'blur(10px)',
-    WebkitBackdropFilter: 'blur(10px)',
+    width: '46px',
+    height: '46px',
+    borderRadius: '23px',
+    // Жидкое стекло: полупрозрачный фон
+    backgroundColor: 'var(--glass-bg)',
+    // Размытие заднего плана
+    backdropFilter: 'blur(16px) saturate(180%)',
+    WebkitBackdropFilter: 'blur(16px) saturate(180%)',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    transition: 'transform 200ms var(--transition-base), background-color 300ms ease',
-    border: 'none',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+    transition: 'all 300ms var(--transition-base)',
+    // Тонкая "стеклянная" граница
+    border: '1px solid var(--glass-border)',
+    boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+    pointerEvents: 'auto',
+    cursor: 'pointer',
   },
   sunIcon: {
     animation: 'rotateScale 400ms var(--transition-base)',

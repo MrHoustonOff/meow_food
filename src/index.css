@@ -9,6 +9,10 @@
   --text-muted: #9A9A9A;
   --border: #EAE8E4;
   
+  /* Стеклянные переменные */
+  --glass-bg: rgba(255, 255, 255, 0.5);
+  --glass-border: rgba(255, 255, 255, 0.4);
+
   --font-main: 'Nunito', sans-serif;
   --transition-base: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -22,6 +26,10 @@
   --text: #F0EEE9;
   --text-muted: #6B6B7A;
   --border: #35353F;
+  
+  /* Стеклянные переменные для темной темы */
+  --glass-bg: rgba(45, 45, 55, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.1);
 }
 
 * {
