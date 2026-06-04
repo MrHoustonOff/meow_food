@@ -41,7 +41,8 @@ function applyAccent(hex) {
 
 export const useTheme = () => {
   const [systemTheme, setSystemThemeState] = useState(() => {
-    return localStorage.getItem(STORAGE_KEYS.systemTheme) === 'true';
+    const saved = localStorage.getItem(STORAGE_KEYS.systemTheme);
+    return saved !== null ? saved === 'true' : true;
   });
 
   // Запоминаем ручную тему (по умолчанию light или сохранённая)

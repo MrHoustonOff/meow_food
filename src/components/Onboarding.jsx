@@ -153,19 +153,28 @@ const Onboarding = ({ onComplete }) => {
             </div>
           </div>
           
-          <button 
-            className={`${styles.button} pressable`} 
-            style={{ marginTop: 'auto', marginBottom: 'var(--space-4)' }}
-            onClick={handleKeysSubmit}
-          >
-            Готово~
-          </button>
+          <div style={{ display: 'flex', gap: 'var(--space-2)', marginTop: 'auto', marginBottom: 'var(--space-4)', width: '100%', maxWidth: '280px' }}>
+            <button 
+              className={`${styles.button} ${styles.buttonOutline} pressable`} 
+              style={{ flex: 1, height: '48px', fontSize: '16px' }}
+              onClick={() => setSlide(5)}
+            >
+              Пропустить
+            </button>
+            <button 
+              className={`${styles.button} pressable`} 
+              style={{ flex: 1, height: '48px', fontSize: '16px', marginTop: 0, marginBottom: 0 }}
+              onClick={handleKeysSubmit}
+            >
+              Готово~
+            </button>
+          </div>
           
           {toast && <div className={styles.toast}>{toast}</div>}
         </div>
       )}
 
-      {/* SLIDE 4: Final */}
+      {/* SLIDE 4: Final (Success) */}
       {slide === 4 && (
         <div className={styles.slide}>
           <div className={`${styles.asciiCat} ${styles.catJump}`}>
@@ -174,6 +183,23 @@ const Onboarding = ({ onComplete }) => {
           <h1 className={styles.title}>Вот и всё~</h1>
           <p className={styles.text}>
             Теперь расскажи мне<br/>что ты только что поел!
+          </p>
+          <button className={`${styles.button} pressable`} onClick={finishOnboarding}>
+            Поехали! 🐱
+          </button>
+        </div>
+      )}
+
+      {/* SLIDE 5: Final (Skipped) */}
+      {slide === 5 && (
+        <div className={styles.slide}>
+          <div className={`${styles.asciiCat}`}>
+            {` /\\_/\\   ;(\n( U_U )\n > ^ < `}
+          </div>
+          <h1 className={styles.title}>Хорошо!</h1>
+          <p className={styles.text}>
+            Но тебе <b>НЕОБХОДИМО</b> добавить<br/>
+            их позже в настройках~
           </p>
           <button className={`${styles.button} pressable`} onClick={finishOnboarding}>
             Поехали! 🐱
