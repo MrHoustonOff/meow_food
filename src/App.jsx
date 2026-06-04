@@ -184,6 +184,23 @@ function App() {
     }
   };
 
+  /** Хелпер для копирования (с фоллбэком) */
+  const handleCopyText = (text) => {
+    if (!text) return;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).catch(() => {});
+    } else {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+  };
+
   // ══════════════════════════════════════════════════════════════
   //  СТЕЙТ-МАШИНА: handlers
   // ══════════════════════════════════════════════════════════════
@@ -521,7 +538,7 @@ function App() {
         open={!!tgErrorText}
         errorText={tgErrorText || ''}
         onCopy={() => {
-          if (lastTgData) navigator.clipboard.writeText(lastTgData).catch(()=>{});
+          handleCopyText(lastTgData);
           setTgErrorText(null);
         }}
         onHome={() => setTgErrorText(null)}
@@ -531,7 +548,7 @@ function App() {
         open={showCopyModal}
         formattedText={lastTgData || ''}
         onCopy={() => {
-          if (lastTgData) navigator.clipboard.writeText(lastTgData).catch(()=>{});
+          handleCopyText(lastTgData);
           setShowCopyModal(false);
         }}
         onHome={() => setShowCopyModal(false)}
