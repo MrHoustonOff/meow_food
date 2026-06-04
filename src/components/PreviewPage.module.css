@@ -1,0 +1,389 @@
+/*
+ * PreviewPage.module.css
+ * Страница подтверждения: JSON-редактор + Raw mode.
+ * Монохром + glass + единственный акцент.
+ */
+
+/* ─── КОНТЕЙНЕР ─────────────────────────────────────────────── */
+.page {
+  animation: morphIn 450ms var(--ease-spring) both;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* ─── ВЕРХНЯЯ ПАНЕЛЬ (Назад + Табы) ─────────────────────────── */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) 0;
+  margin-bottom: var(--space-4);
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--accent);
+  font-family: var(--font-round);
+  font-size: 16px;
+  font-weight: 600;
+  padding: var(--space-2);
+  margin-left: calc(-1 * var(--space-2));
+  border-radius: var(--radius-md);
+
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+.backButton:active {
+  opacity: 0.6;
+  transform: scale(0.95);
+}
+
+/* ─── ТАБЫ (JSON / Raw) ──────────────────────────────────────── */
+.tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--separator);
+  border-radius: var(--radius-md);
+  padding: 2px;
+}
+
+.tab {
+  padding: var(--space-1) var(--space-4);
+  border-radius: calc(var(--radius-md) - 2px);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+  font-family: var(--font-round);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+
+  transition: all 200ms ease;
+}
+
+.tabActive {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-xs);
+}
+
+/* ─── ЗАГОЛОВОК-ПРИВЕТСТВИЕ ──────────────────────────────────── */
+.heading {
+  font-family: var(--font-round);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: var(--space-6);
+  line-height: var(--leading-snug);
+  animation: slideUpFade 350ms var(--ease-spring) 100ms both;
+}
+
+/* ─── СЕКЦИИ ФОРМЫ ──────────────────────────────────────────── */
+.section {
+  margin-bottom: var(--space-5);
+}
+
+.sectionLabel {
+  font-family: var(--font-round);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ─── ПОЛЯ ВВОДА (meta) ──────────────────────────────────────── */
+.fieldRow {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.field {
+  flex: 1;
+}
+
+.fieldInput {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--separator);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur-sm);
+  -webkit-backdrop-filter: var(--glass-blur-sm);
+
+  font-family: var(--font-round);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-primary);
+  outline: none;
+
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+.fieldInput:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-muted);
+}
+
+.fieldSelect {
+  composes: fieldInput;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%239A9A9A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-4) center;
+  padding-right: var(--space-10);
+}
+
+/* ─── СПИСОК ITEMS (еда / факты) ─────────────────────────────── */
+.itemList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--separator);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur-sm);
+  -webkit-backdrop-filter: var(--glass-blur-sm);
+
+  animation: slideUpFade 250ms var(--ease-spring) both;
+}
+
+.itemInput {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  outline: none;
+  font-family: var(--font-round);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  padding: var(--space-1) 0;
+}
+.itemInput::placeholder {
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+/* Разделитель «—» между name и amount */
+.itemSep {
+  color: var(--text-tertiary);
+  font-size: 14px;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.itemRemove {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-pill);
+  background: var(--separator);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: background 150ms ease, color 150ms ease, transform 150ms ease;
+}
+.itemRemove:active {
+  transform: scale(0.88);
+  background: rgba(255, 55, 95, 0.15);
+  color: var(--accent);
+}
+
+.addButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  margin-top: var(--space-2);
+  border-radius: var(--radius-lg);
+  border: 1.5px dashed var(--separator);
+  background: transparent;
+  cursor: pointer;
+
+  font-family: var(--font-round);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+
+  transition: border-color 200ms ease, color 200ms ease, transform 150ms ease;
+}
+.addButton:active {
+  transform: scale(0.97);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ─── ФОТО СЕКЦИЯ ────────────────────────────────────────────── */
+.photoSection {
+  margin-bottom: var(--space-5);
+}
+
+.photoPreview {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-lg);
+}
+
+.photoThumb {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid var(--separator);
+}
+
+.photoMeta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.photoName {
+  font-family: var(--font-round);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.photoSize {
+  font-family: var(--font-round);
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+/* ─── КНОПКА ПОДТВЕРЖДЕНИЯ ───────────────────────────────────── */
+.confirmButton {
+  width: 100%;
+  height: 54px;
+  border-radius: var(--radius-xl);
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-6);
+
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1.5px solid var(--accent);
+  box-shadow: var(--shadow-accent);
+
+  font-family: var(--font-round);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--accent);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  cursor: pointer;
+
+  transition: opacity 150ms ease, transform 150ms ease,
+              box-shadow 200ms ease, background 200ms ease;
+}
+.confirmButton:active {
+  transform: scale(0.97);
+  background: var(--accent-muted);
+  box-shadow: none;
+}
+
+/* Скрытый file input */
+.fileInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ─── RAW MODE ───────────────────────────────────────────────── */
+.rawContainer {
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  overflow: auto;
+  max-height: 60dvh;
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) transparent;
+}
+.rawContainer::-webkit-scrollbar { width: 4px; }
+.rawContainer::-webkit-scrollbar-track { background: transparent; }
+.rawContainer::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 99px;
+}
+
+.rawText {
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+  user-select: text;
+}
+
+/* ─── ATTACH BUTTON (в PreviewPage) ──────────────────────────── */
+.attachBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1.5px dashed var(--separator);
+  background: transparent;
+  cursor: pointer;
+
+  font-family: var(--font-round);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+
+  transition: border-color 200ms ease, color 200ms ease, transform 150ms ease;
+}
+.attachBtn:active {
+  transform: scale(0.97);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ─── BLUR STATE (когда tg_sending) ──────────────────────────── */
+.blurred {
+  animation: contentBlurIn 400ms ease forwards;
+  pointer-events: none;
+}

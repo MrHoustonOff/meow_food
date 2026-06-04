@@ -131,6 +131,72 @@
 .anim-delay-4 { animation-delay: 240ms; }
 .anim-delay-5 { animation-delay: 300ms; }
 
+/* ─── LOADING OVERLAY ────────────────────────────────────────── */
+
+/* Бегущий котик — мягкий bounce вверх-вниз */
+@keyframes catRun {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25%      { transform: translateY(-6px) rotate(-2deg); }
+  50%      { transform: translateY(0) rotate(0deg); }
+  75%      { transform: translateY(-4px) rotate(2deg); }
+}
+
+/* Прыгающая рыбка — дуга влево-вправо */
+@keyframes fishBounce {
+  0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); }
+  25%      { transform: translateX(14px) translateY(-10px) rotate(20deg); }
+  50%      { transform: translateX(0) translateY(0) rotate(0deg); }
+  75%      { transform: translateX(-14px) translateY(-10px) rotate(-20deg); }
+}
+
+/* Анимированные точки загрузки (stagger через delay) */
+@keyframes dotBounce {
+  0%, 80%, 100% { opacity: 0.25; transform: translateY(0); }
+  40%           { opacity: 1; transform: translateY(-5px); }
+}
+
+/* ─── PHASE TRANSITIONS ──────────────────────────────────────── */
+
+/* Контент блюрится (input → loading) */
+@keyframes contentBlurIn {
+  from { filter: blur(0px); opacity: 1; }
+  to   { filter: blur(8px); opacity: 0.3; }
+}
+
+/* Контент разблюривается (loading → idle) */
+@keyframes contentBlurOut {
+  from { filter: blur(8px); opacity: 0.3; }
+  to   { filter: blur(0px); opacity: 1; }
+}
+
+/* Морфинг входа нового экрана */
+@keyframes morphIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.97); filter: blur(4px); }
+  to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
+}
+
+/* Морфинг выхода экрана */
+@keyframes morphOut {
+  from { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
+  to   { opacity: 0; transform: translateY(20px) scale(0.97); filter: blur(4px); }
+}
+
+/* Лапки котика — шагание */
+@keyframes legFront {
+  0%, 100% { transform: rotate(-15deg); }
+  50%      { transform: rotate(15deg); }
+}
+@keyframes legBack {
+  0%, 100% { transform: rotate(15deg); }
+  50%      { transform: rotate(-15deg); }
+}
+
+/* Хвост котика — покачивание */
+@keyframes tailWag {
+  0%, 100% { transform: rotate(-20deg); }
+  50%      { transform: rotate(10deg); }
+}
+
 /* ── Press-эффект для интерактивных элементов ── */
 .pressable {
   transition: transform var(--dur-fast) var(--ease-snappy),

@@ -1,9 +1,13 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import Header from './components/Header';
 import SettingsPage from './components/SettingsPage';
+import LoadingOverlay from './components/LoadingOverlay';
+import PreviewPage from './components/PreviewPage';
+import ConfirmBackModal from './components/ConfirmBackModal';
 import { Send, Cat, Paperclip, X } from 'lucide-react';
 import { useTheme } from './hooks/useTheme';
 import { useSettings } from './hooks/useSettings';
+import { generateMockResponse } from './utils/mockData';
 import styles from './App.module.css';
 
 /* ─── КОНТЕКСТНЫЕ ПРИВЕТСТВИЯ ─────────────────────────────────── */
@@ -33,6 +37,9 @@ function getGreeting() {
 
 const BASE_HEIGHT_MULTIPLIER = 1.5;
 
+/** Длительность mock-задержки (мс) */
+const MOCK_DELAY = 2000;
+
 function App() {
   // ── Глобальный стейт ──────────────────────────────────────────
   const { theme, accents, systemTheme, setTheme, toggleTheme, setSystemTheme, setAccent } = useTheme();
@@ -40,6 +47,17 @@ function App() {
 
   // ── Навигация ──────────────────────────────────────────────────
   const [view, setView] = useState('home'); // 'home' | 'settings'
+
+  // ── Фаза основного flow ────────────────────────────────────────
+  // 'idle' | 'ai_loading' | 'preview' | 'tg_sending'
+  const [phase, setPhase] = useState('idle');
+
+  // ── Результат ИИ ──────────────────────────────────────────────
+  const [aiResult, setAiResult] = useState(null);  // parsed JSON
+  const [rawText, setRawText] = useState('');       // raw string
+
+  // ── Модалка «Назад» ──────────────────────────────────────────
+  const [showBackModal, setShowBackModal] = useState(false);
 
   // ── Главный экран ──────────────────────────────────────────────
   const [text, setText] = useState('');
@@ -56,7 +74,7 @@ function App() {
 
   // ── Лайтбокс ─────────────────────────────────────────────────
   const [lightbox, setLightbox] = useState(false);
-  const thumbRef        = useRef(null); // ref на миниатюру для hero-origin
+  const thumbRef        = useRef(null);
   const dragRef         = useRef({ startY: 0, dy: 0, active: false });
   const lightboxImgRef  = useRef(null);
 
@@ -82,7 +100,7 @@ function App() {
     if (!dragRef.current.active) return;
     const dy = e.touches[0].clientY - dragRef.current.startY;
     dragRef.current.dy = dy;
-    if (dy < 0) return; // вверх не тянем
+    if (dy < 0) return;
     const img = lightboxImgRef.current;
     if (!img) return;
     const scale = Math.max(0.6, 1 - dy / 600);
@@ -97,7 +115,6 @@ function App() {
     if (dy > 90) {
       closeLightbox(true);
     } else {
-      // Возвращаем на место
       const img = lightboxImgRef.current;
       if (img) {
         img.style.transition = 'transform 300ms cubic-bezier(0.3, 1, 0.3, 1), opacity 200ms ease';
@@ -107,20 +124,22 @@ function App() {
     }
   };
 
-  const handlePhotoSelect = (e) => {
+  // ── Фото: выбор / удаление ────────────────────────────────────
+
+  const handlePhotoSelect = useCallback((e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    // Убираем старый Object URL перед заменой
     if (photo?.url) URL.revokeObjectURL(photo.url);
     setPhoto({ file, url: URL.createObjectURL(file) });
-    // Сбрасываем input, чтобы можно было выбрать тот же файл повторно
     e.target.value = '';
-  };
+  }, [photo]);
 
-  const handlePhotoRemove = () => {
+  const handlePhotoRemove = useCallback(() => {
     if (photo?.url) URL.revokeObjectURL(photo.url);
     setPhoto(null);
-  };
+  }, [photo]);
+
+  // ── Textarea auto-resize ──────────────────────────────────────
 
   const handleInput = (e) => {
     setText(e.target.value);
@@ -149,13 +168,73 @@ function App() {
     }
   };
 
+  // ══════════════════════════════════════════════════════════════
+  //  СТЕЙТ-МАШИНА: handlers
+  // ══════════════════════════════════════════════════════════════
+
+  /** Шаг 1: Отправить → AI loading (mock 2 сек) */
   const handleSubmit = () => {
     if (!text.trim() && !photo) return;
-    console.log('Отправляем:', text, photo?.file ?? null);
-    // После отправки чистим фото
-    if (photo?.url) URL.revokeObjectURL(photo.url);
-    setPhoto(null);
+
+    setPhase('ai_loading');
+
+    // Mock: через 2 секунды «ИИ отвечает»
+    setTimeout(() => {
+      const { parsed, raw } = generateMockResponse();
+      setAiResult(parsed);
+      setRawText(raw);
+      setPhase('preview');
+    }, MOCK_DELAY);
   };
+
+  /** Шаг 2 (preview): Нажали «Назад» → показать модалку */
+  const handlePreviewBack = () => {
+    setShowBackModal(true);
+  };
+
+  /** Модалка: подтвердили «Уйти» → сброс в idle */
+  const handleConfirmBack = () => {
+    setShowBackModal(false);
+    setAiResult(null);
+    setRawText('');
+    setPhase('idle');
+  };
+
+  /** Модалка: нажали «Нет» → закрыть модалку */
+  const handleCancelBack = () => {
+    setShowBackModal(false);
+  };
+
+  /** Шаг 3: Подтвердить → TG sending (mock 2 сек) */
+  const handleConfirm = (editedData) => {
+    // editedData — отредактированный JSON из PreviewPage
+    console.log('Отправляем в TG:', editedData, photo?.file ?? null);
+    setPhase('tg_sending');
+
+    // Mock: через 2 секунды «отправлено»
+    setTimeout(() => {
+      // Полный сброс
+      if (photo?.url) URL.revokeObjectURL(photo.url);
+      setPhoto(null);
+      setText('');
+      setAiResult(null);
+      setRawText('');
+      setPhase('idle');
+
+      // Сбрасываем textarea height
+      const ta = textareaRef.current;
+      if (ta) {
+        ta.style.height = 'auto';
+        ta.style.overflowY = 'hidden';
+        ta.classList.remove(styles.textareaScrollable);
+        baseHeightRef.current = null;
+      }
+    }, MOCK_DELAY);
+  };
+
+  // ══════════════════════════════════════════════════════════════
+  //  РЕНДЕР
+  // ══════════════════════════════════════════════════════════════
 
   // ── Страница настроек ─────────────────────────────────────────
   if (view === 'settings') {
@@ -174,7 +253,49 @@ function App() {
     );
   }
 
-  // ── Главный экран ─────────────────────────────────────────────
+  // ── Preview page (phase: preview | tg_sending) ────────────────
+  if (phase === 'preview' || phase === 'tg_sending') {
+    return (
+      <div className="screen">
+        <div className={styles.screenInner}>
+          <Header
+            theme={theme}
+            toggleTheme={toggleTheme}
+            onSettings={() => setView('settings')}
+          />
+
+          <main className={`scroll-area ${styles.main}`}>
+            <div className={`container safe-bottom ${styles.content}`}>
+              <PreviewPage
+                aiResult={aiResult}
+                rawText={rawText}
+                photo={photo}
+                onPhotoRemove={handlePhotoRemove}
+                onPhotoSelect={handlePhotoSelect}
+                onConfirm={handleConfirm}
+                onBack={handlePreviewBack}
+                isBlurred={phase === 'tg_sending'}
+              />
+            </div>
+          </main>
+        </div>
+
+        {/* Loading overlay для TG sending */}
+        {phase === 'tg_sending' && (
+          <LoadingOverlay type="telegram" />
+        )}
+
+        {/* Модалка «Назад» */}
+        <ConfirmBackModal
+          open={showBackModal}
+          onCancel={handleCancelBack}
+          onConfirm={handleConfirmBack}
+        />
+      </div>
+    );
+  }
+
+  // ── Главный экран (phase: idle | ai_loading) ──────────────────
   return (
     <div className="screen">
       <div className={styles.screenInner}>
@@ -185,7 +306,11 @@ function App() {
         />
 
         <main className={`scroll-area ${styles.main}`}>
-          <div className={`container safe-bottom ${styles.content}`}>
+          <div
+            className={`container safe-bottom ${styles.content} ${
+              phase === 'ai_loading' ? styles.contentBlurred : ''
+            }`}
+          >
 
             {/* ── АВАТАРКА И ПРИВЕТСТВИЕ ── */}
             <section className={styles.hero}>
@@ -213,7 +338,7 @@ function App() {
                 />
               </div>
 
-              {/* Скрытый file input — без capture, чтобы ОС сама предложила камеру или галерею */}
+              {/* Скрытый file input */}
               <input
                 ref={fileInputRef}
                 type="file"
@@ -281,7 +406,12 @@ function App() {
         </main>
       </div>
 
-      {/* ══ ЛАЙТБОКС ══ позиционируется вне скролла, поверх всего */}
+      {/* ══ LOADING OVERLAY (AI) ══ */}
+      {phase === 'ai_loading' && (
+        <LoadingOverlay type="ai" />
+      )}
+
+      {/* ══ ЛАЙТБОКС ══ */}
       {lightbox && photo && (
         <div
           className={styles.lightboxOverlay}
@@ -293,7 +423,6 @@ function App() {
           role="dialog"
           aria-label="Просмотр фото"
         >
-          {/* Кнопка закрытия */}
           <button
             className={styles.lightboxCloseBtn}
             onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
@@ -302,7 +431,6 @@ function App() {
             <X size={20} strokeWidth={2.5} />
           </button>
 
-          {/* Фото — стопим провал через оверлей */}
           <img
             ref={lightboxImgRef}
             src={photo.url}
@@ -311,7 +439,6 @@ function App() {
             onClick={(e) => e.stopPropagation()}
           />
 
-          {/* Хинт свайп */}
           <p className={styles.lightboxHint}>Свайпните вниз, чтобы закрыть</p>
         </div>
       )}

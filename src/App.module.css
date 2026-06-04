@@ -28,6 +28,12 @@
   min-height: 100%;
 }
 
+/* Блюр контента при ai_loading фазе */
+.contentBlurred {
+  animation: contentBlurIn 400ms ease forwards;
+  pointer-events: none;
+}
+
 /* ─── HERO ─────────────────────────────────────────────────── */
 .hero {
   display: flex;

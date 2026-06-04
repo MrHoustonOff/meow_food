@@ -1,0 +1,233 @@
+/*
+ * LoadingOverlay.module.css
+ * Полноэкранный overlay с CSS-котиком и рыбкой.
+ * Два режима: 'ai' (бегу проверять) и 'telegram' (несу посылку).
+ */
+
+/* ─── OVERLAY ──────────────────────────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 800;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+
+  background: var(--bg-app);
+  animation: fadeIn 350ms var(--ease-smooth) both;
+}
+
+/* ─── СЦЕНА С КОТИКОМ ────────────────────────────────────────── */
+.scene {
+  position: relative;
+  width: 120px;
+  height: 100px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* ─── CSS КОТ ────────────────────────────────────────────────── */
+.cat {
+  position: relative;
+  width: 50px;
+  height: 40px;
+  animation: catRun 500ms ease-in-out infinite;
+}
+
+/* Тело */
+.catBody {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 22px;
+  background: var(--text-secondary);
+  border-radius: 50% 50% 40% 40%;
+}
+
+/* Голова */
+.catHead {
+  position: absolute;
+  bottom: 26px;
+  left: 2px;
+  width: 20px;
+  height: 18px;
+  background: var(--text-secondary);
+  border-radius: 50% 50% 40% 40%;
+}
+
+/* Ушки — через ::before и ::after головы */
+.catHead::before,
+.catHead::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 8px solid var(--text-secondary);
+}
+.catHead::before { left: 0; }
+.catHead::after  { right: 0; }
+
+/* Глазки */
+.catEyes {
+  position: absolute;
+  bottom: 30px;
+  left: 6px;
+  width: 12px;
+  height: 4px;
+}
+.catEyes::before,
+.catEyes::after {
+  content: '';
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--bg-app);
+  top: 0;
+}
+.catEyes::before { left: 1px; }
+.catEyes::after  { right: 1px; }
+
+/* Носик — акцентный! */
+.catNose {
+  position: absolute;
+  bottom: 28px;
+  left: 10px;
+  width: 0;
+  height: 0;
+  border-left: 2.5px solid transparent;
+  border-right: 2.5px solid transparent;
+  border-top: 3px solid var(--accent);
+}
+
+/* Хвост */
+.catTail {
+  position: absolute;
+  bottom: 24px;
+  right: -2px;
+  width: 16px;
+  height: 16px;
+  border: 3px solid var(--text-secondary);
+  border-color: var(--text-secondary) var(--text-secondary) transparent transparent;
+  border-radius: 0 70% 0 0;
+  transform-origin: bottom left;
+  animation: tailWag 600ms ease-in-out infinite;
+}
+
+/* ─── ЛАПКИ ─────────────────────────────────────────────────── */
+.catLegs {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 14px;
+}
+
+/* Передние лапки */
+.legFL, .legFR {
+  position: absolute;
+  bottom: 0;
+  width: 3px;
+  height: 12px;
+  background: var(--text-secondary);
+  border-radius: 0 0 2px 2px;
+  transform-origin: top center;
+}
+.legFL {
+  left: 4px;
+  animation: legFront 300ms ease-in-out infinite;
+}
+.legFR {
+  left: 10px;
+  animation: legBack 300ms ease-in-out infinite;
+}
+
+/* Задние лапки */
+.legBL, .legBR {
+  position: absolute;
+  bottom: 0;
+  width: 3px;
+  height: 12px;
+  background: var(--text-secondary);
+  border-radius: 0 0 2px 2px;
+  transform-origin: top center;
+}
+.legBL {
+  right: 10px;
+  animation: legBack 300ms ease-in-out infinite;
+}
+.legBR {
+  right: 4px;
+  animation: legFront 300ms ease-in-out infinite;
+}
+
+/* ─── «ЗЕМЛЯ» — бегущие точки ────────────────────────────────── */
+.ground {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+.ground span {
+  width: 4px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--text-tertiary);
+  animation: shimmer 1s linear infinite;
+}
+.ground span:nth-child(2) { animation-delay: 200ms; }
+.ground span:nth-child(3) { animation-delay: 400ms; }
+
+/* ─── РЫБКА ──────────────────────────────────────────────────── */
+.fish {
+  position: absolute;
+  top: 6px;
+  right: 4px;
+  font-size: 22px;
+  line-height: 1;
+  animation: fishBounce 1.2s ease-in-out infinite;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ─── ТЕКСТ ──────────────────────────────────────────────────── */
+.text {
+  font-family: var(--font-round);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+  max-width: 280px;
+  line-height: var(--leading-snug);
+  animation: slideUpFade 400ms var(--ease-spring) 150ms both;
+}
+
+/* ─── АНИМИРОВАННЫЕ ТОЧКИ ────────────────────────────────────── */
+.dots {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  animation: fadeIn 300ms ease 300ms both;
+}
+.dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: dotBounce 1.2s ease-in-out infinite;
+}
+.dots span:nth-child(2) { animation-delay: 150ms; }
+.dots span:nth-child(3) { animation-delay: 300ms; }
