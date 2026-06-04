@@ -266,45 +266,58 @@ function PreviewPage({
                   {/* БЖУ / Макросы */}
                   <div style={{ marginTop: 'var(--space-2)' }}>
                     {food.macros ? (
-                      <button 
-                        type="button" 
-                        onClick={() => setEditingMacrosIndex(i)}
-                        className={styles.macrosBadgeButton}
-                        aria-label={`Редактировать БЖУ для ${food.name}`}
-                      >
-                        {food.macros.per_100g ? (
-                          <>
-                            <span className={styles.macroBadge}>Б: {food.macros.per_100g.b}</span>
-                            <span className={styles.macroBadge}>Ж: {food.macros.per_100g.f}</span>
-                            <span className={styles.macroBadge}>У: {food.macros.per_100g.c}</span>
-                            <span className={styles.macroBadge}>(на 100г)</span>
-                            {food.macros.total && (
-                              <span
-                                className={`${styles.macroBadge} pressable`}
-                                style={{ background: 'var(--accent)', color: 'white' }}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setEditingTotalMacrosIndex(i);
-                                }}
-                              >
-                                Итого: Б:{food.macros.total.b} Ж:{food.macros.total.f} У:{food.macros.total.c}
-                              </span>
-                            )}
-                            {food.macros.note && (
-                              <span className={styles.macroBadge} style={{ color: 'var(--text-tertiary)' }}>
-                                {food.macros.note}
-                              </span>
-                            )}
-                          </>
+                      <div className={styles.macrosBadgeButton} style={{ pointerEvents: 'auto' }}>
+                        <div 
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => setEditingMacrosIndex(i)}
+                          style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap', cursor: 'pointer' }}
+                          className="pressable"
+                        >
+                          {food.macros.per_100g ? (
+                            <>
+                              <span className={styles.macroBadge}>Б: {food.macros.per_100g.b}</span>
+                              <span className={styles.macroBadge}>Ж: {food.macros.per_100g.f}</span>
+                              <span className={styles.macroBadge}>У: {food.macros.per_100g.c}</span>
+                              <span className={styles.macroBadge}>(на 100г)</span>
+                            </>
+                          ) : (
+                            <>
+                              <span className={styles.macroBadge}>Б: {food.macros.proteins}</span>
+                              <span className={styles.macroBadge}>Ж: {food.macros.fats}</span>
+                              <span className={styles.macroBadge}>У: {food.macros.carbs}</span>
+                              <span className={styles.macroBadge}>{food.macros.calories} ккал (на 100г)</span>
+                            </>
+                          )}
+                        </div>
+                        
+                        {food.macros.total ? (
+                          <button
+                            type="button"
+                            className={`${styles.macroBadge} pressable`}
+                            style={{ background: 'var(--accent)', color: 'white', border: 'none', cursor: 'pointer' }}
+                            onClick={() => setEditingTotalMacrosIndex(i)}
+                          >
+                            Итого: Б:{food.macros.total.b} Ж:{food.macros.total.f} У:{food.macros.total.c}
+                          </button>
                         ) : (
-                          <>
-                            <span className={styles.macroBadge}>Б: {food.macros.proteins}</span>
-                            <span className={styles.macroBadge}>Ж: {food.macros.fats}</span>
-                            <span className={styles.macroBadge}>У: {food.macros.carbs}</span>
-                            <span className={styles.macroBadge}>{food.macros.calories} ккал (на 100г)</span>
-                          </>
+                          <button
+                            type="button"
+                            onClick={() => setEditingTotalMacrosIndex(i)}
+                            className={styles.addMacrosBtn}
+                            style={{ padding: '2px 8px', fontSize: 'var(--text-xs)', height: 'auto', minHeight: '24px' }}
+                          >
+                            <Plus size={12} strokeWidth={2.5} style={{ marginRight: 4 }} />
+                            Итог БЖУ
+                          </button>
                         )}
-                      </button>
+
+                        {food.macros.note && (
+                          <span className={styles.macroBadge} style={{ color: 'var(--text-tertiary)' }}>
+                            {food.macros.note}
+                          </span>
+                        )}
+                      </div>
                     ) : (
                       <button
                         type="button"
