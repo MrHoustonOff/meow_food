@@ -1,0 +1,72 @@
+:root {
+  /* Светлая тема */
+  --bg: #FAFAF7;
+  --surface: #FFFFFF;
+  --surface-2: #F4F2EE;
+  --accent: #FF9BB5;
+  --accent-2: #FFB347;
+  --text: #2D2D2D;
+  --text-muted: #9A9A9A;
+  --border: #EAE8E4;
+  
+  --font-main: 'Nunito', sans-serif;
+  --transition-base: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+[data-theme='dark'] {
+  --bg: #1A1A1F;
+  --surface: #25252D;
+  --surface-2: #2F2F38;
+  --accent: #FF9BB5;
+  --accent-2: #FFB347;
+  --text: #F0EEE9;
+  --text-muted: #6B6B7A;
+  --border: #35353F;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: var(--font-main);
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background 400ms ease, color 400ms ease;
+  overflow-x: hidden;
+  /* Для iOS Safari плавный скролл */
+  -webkit-overflow-scrolling: touch;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  font-family: var(--font-main);
+  border: none;
+  cursor: pointer;
+  outline: none;
+}
+
+input, textarea {
+  font-family: var(--font-main);
+  font-size: 16px; /* Предотвращает зум в iOS Safari */
+}
+
+/* Анимации из спеки */
+.bounce-enter {
+  animation: bounce 350ms var(--transition-base);
+}
+
+@keyframes bounce {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
