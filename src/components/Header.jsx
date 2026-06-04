@@ -8,16 +8,14 @@ const Header = () => {
   return (
     <header style={styles.header}>
       <button style={styles.iconButton} onClick={() => console.log('Open Settings')}>
-        <Settings size={20} color="var(--text)" />
+        <Settings size={22} color="var(--text)" strokeWidth={2.5} />
       </button>
-
-      <h1 style={styles.title}>Мяу-дневник 🐱</h1>
 
       <button style={styles.iconButton} onClick={toggleTheme}>
         {theme === 'light' ? (
-          <Sun size={20} color="var(--accent-2)" style={styles.sunIcon} />
+          <Sun size={22} color="var(--accent-2)" style={styles.sunIcon} strokeWidth={2.5} />
         ) : (
-          <Moon size={20} color="var(--accent)" style={styles.moonIcon} />
+          <Moon size={22} color="var(--accent)" style={styles.moonIcon} strokeWidth={2.5} />
         )}
       </button>
     </header>
@@ -29,31 +27,25 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: '12px 16px',
+    padding: 'calc(12px + env(safe-area-inset-top)) 20px 12px 20px',
     position: 'sticky',
     top: 0,
-    backgroundColor: 'var(--bg)',
-    backdropFilter: 'blur(20px)',
-    WebkitBackdropFilter: 'blur(20px)',
+    backgroundColor: 'transparent',
     zIndex: 100,
-    borderBottom: '1px solid var(--border)',
-  },
-  title: {
-    fontSize: '18px',
-    fontWeight: 800,
-    margin: 0,
-    color: 'var(--text)',
   },
   iconButton: {
-    width: '36px',
-    height: '36px',
-    borderRadius: '18px',
+    width: '44px',
+    height: '44px',
+    borderRadius: '22px',
     backgroundColor: 'var(--surface-2)',
+    backdropFilter: 'blur(10px)',
+    WebkitBackdropFilter: 'blur(10px)',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    transition: 'transform 200ms var(--transition-base)',
+    transition: 'transform 200ms var(--transition-base), background-color 300ms ease',
     border: 'none',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
   },
   sunIcon: {
     animation: 'rotateScale 400ms var(--transition-base)',
