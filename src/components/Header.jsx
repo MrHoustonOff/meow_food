@@ -27,15 +27,13 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    // Поднимаем кнопки выше, уменьшая отступ
-    padding: '12px 20px',
-    position: 'fixed',
+    padding: '24px 20px 12px 20px', // Умеренный отступ сверху
+    position: 'absolute', // Теперь он часть скролла
     top: 0,
     left: 0,
     right: 0,
     backgroundColor: 'transparent',
     zIndex: 100,
-    pointerEvents: 'none',
   },
   iconButton: {
     width: '46px',
@@ -50,7 +48,6 @@ const styles = {
     transition: 'all 300ms var(--transition-base)',
     border: '1px solid var(--glass-border)',
     boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
-    pointerEvents: 'auto',
     cursor: 'pointer',
   },
   sunIcon: {

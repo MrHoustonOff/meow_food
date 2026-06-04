@@ -37,7 +37,11 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-body, html {
+html {
+  background-color: var(--bg); /* Фикс для белой зоны сверху Safari */
+}
+
+body {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -63,6 +67,7 @@ body::-webkit-scrollbar {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  position: relative; /* Для абсолютного хедера */
 }
 
 button {
