@@ -246,18 +246,32 @@ const SettingsPage = ({
               ))}
             </section>
 
-            {/* ════ ТЕСТОВЫЙ ЗАПРОС ════════════════════════════════════ */}
-            <section className={styles.section} style={{ marginTop: 'var(--space-6)' }}>
+            {/* ════ DEV SECTION ════════════════════════════════════ */}
+            <section className={styles.section} style={{ marginTop: 'var(--space-6)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-4)' }}>
               <button
                 type="button"
-                className={`${styles.systemThemeBtn} pressable no-select`}
-                style={{ justifyContent: 'center', color: 'var(--accent)', fontWeight: 'bold' }}
+                className="pressable no-select"
+                style={{
+                  width: '100%',
+                  padding: 'var(--space-4)',
+                  borderRadius: 'var(--radius-round)',
+                  border: 'none',
+                  background: 'var(--accent)',
+                  color: '#FFF',
+                  fontSize: 'var(--text-base)',
+                  fontWeight: '700',
+                  boxShadow: '0 4px 12px rgba(255, 55, 95, 0.25)' // мягкая тень от акцента
+                }}
                 onClick={() => {
                   if (onTestApi) onTestApi();
                 }}
               >
                 Отправить тестовый запрос
               </button>
+
+              <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-tertiary)', fontWeight: '600' }}>
+                Мяу-дневник v0.8 🐱
+              </span>
             </section>
 
             <div className="bottom-nav-spacer" />
