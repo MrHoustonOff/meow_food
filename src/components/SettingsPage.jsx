@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Sun, Moon } from 'lucide-react';
 import SecretField from './SecretField';
 import AccentPicker from './AccentPicker';
 import styles from './SettingsPage.module.css';
@@ -10,13 +10,15 @@ import styles from './SettingsPage.module.css';
  * стейт живёт в App.jsx через хуки useSettings + useTheme.
  *
  * Props:
- *   onBack       — () => void
- *   settings     — { provider, aiKey, telegramToken, telegramChatId }
- *   updateField  — (key, value) => void
- *   theme        — 'light' | 'dark'
- *   setTheme     — (t: 'light'|'dark') => void
- *   accents      — { light: '#...', dark: '#...' }
- *   setAccent    — (forTheme, hex) => void
+ *   onBack          — () => void
+ *   settings        — { provider, aiKey, telegramToken, telegramChatId }
+ *   updateField     — (key, value) => void
+ *   theme           — 'light' | 'dark'
+ *   setTheme        — (t: 'light'|'dark') => void
+ *   systemTheme     — boolean
+ *   setSystemTheme  — (bool) => void
+ *   accents         — { light: '#...', dark: '#...' }
+ *   setAccent       — (forTheme, hex) => void
  */
 
 /* ─── ПРОВАЙДЕРЫ (расширять здесь) ─────────────────────────────── */
@@ -31,6 +33,8 @@ const SettingsPage = ({
   updateField,
   theme,
   setTheme,
+  systemTheme,
+  setSystemTheme,
   accents,
   setAccent,
 }) => {
@@ -38,25 +42,23 @@ const SettingsPage = ({
     <div className="screen">
       <div className={styles.page}>
 
-        {/* ── НАВИГАЦИЯ ──────────────────────────────────────────── */}
-        <header className={`${styles.navBar} glass-mid`}>
-          <button
-            id="btn-settings-back"
-            className={`${styles.backBtn} no-select pressable`}
-            onClick={onBack}
-            aria-label="Назад"
-          >
-            <ChevronLeft size={22} strokeWidth={2.5} />
-            <span>Назад</span>
-          </button>
-          <h1 className={styles.navTitle}>Настройки</h1>
-          {/* правый слот — пустой, для симметрии */}
-          <div className={styles.navRight} />
-        </header>
-
-        {/* ── КОНТЕНТ ────────────────────────────────────────────── */}
-        <main className={`scroll-area ${styles.content}`}>
+        {/* ── ЕДИНЫЙ СКРОЛЛ-КОНТЕЙНЕР ────────────────────────────── */}
+        <div className={styles.content}>
           <div className={`container safe-bottom ${styles.sections}`}>
+
+            {/* ── ЗАГОЛОВОК СТРАНИЦЫ (скроллится вместе) ── */}
+            <div className={styles.pageHeader}>
+              <button
+                id="btn-settings-back"
+                className={`${styles.backBtn} no-select pressable`}
+                onClick={onBack}
+                aria-label="Назад"
+              >
+                <ChevronLeft size={22} strokeWidth={2.5} />
+                <span>Назад</span>
+              </button>
+              <h1 className={styles.pageTitle}>Настройки</h1>
+            </div>
 
             {/* ════ AI ПРОВАЙДЕР ══════════════════════════════════ */}
             <section className={styles.section}>
@@ -115,22 +117,36 @@ const SettingsPage = ({
             {/* ════ ТЕМА ══════════════════════════════════════════ */}
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>Тема</h2>
+              
+              {/* Автоматически по системе */}
+              <div className={`${styles.card} glass-mid`}>
+                <button
+                  type="button"
+                  className={`${styles.systemThemeBtn} ${systemTheme ? styles.systemThemeActive : ''} no-select`}
+                  onClick={() => setSystemTheme(!systemTheme)}
+                >
+                  <span className={styles.systemThemeLabel}>По теме устройства</span>
+                  <div className={styles.toggleSwitch}>
+                    <div className={styles.toggleKnob} />
+                  </div>
+                </button>
+              </div>
 
               {/* Переключатель светлая / тёмная */}
-              <div className={`${styles.card} glass-mid`}>
+              <div className={`${styles.card} glass-mid`} style={{ opacity: systemTheme ? 0.5 : 1, pointerEvents: systemTheme ? 'none' : 'auto' }}>
                 <div className={styles.themeRow}>
                   {[
-                    { id: 'light', emoji: '☀️', label: 'Светлая' },
-                    { id: 'dark',  emoji: '🌙', label: 'Тёмная'  },
+                    { id: 'light', icon: <Sun size={20} strokeWidth={2.5} />, label: 'Светлая' },
+                    { id: 'dark',  icon: <Moon size={20} strokeWidth={2.5} />, label: 'Тёмная'  },
                   ].map((t) => (
                     <button
                       key={t.id}
                       id={`btn-theme-${t.id}`}
                       type="button"
-                      className={`${styles.themeBtn} ${theme === t.id ? styles.themeBtnActive : ''} no-select`}
-                      onClick={() => setTheme(t.id)}
+                      className={`${styles.themeBtn} ${theme === t.id && !systemTheme ? styles.themeBtnActive : ''} no-select`}
+                      onClick={() => !systemTheme && setTheme(t.id)}
                     >
-                      <span className={styles.themeEmoji}>{t.emoji}</span>
+                      <span className={styles.themeIcon}>{t.icon}</span>
                       <span className={styles.themeLabel}>{t.label}</span>
                     </button>
                   ))}
@@ -161,7 +177,7 @@ const SettingsPage = ({
 
             <div className="bottom-nav-spacer" />
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );

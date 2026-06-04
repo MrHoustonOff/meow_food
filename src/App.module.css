@@ -137,13 +137,54 @@
   font-style: italic;
 }
 
-/* ─── КНОПКА ОТПРАВИТЬ (единственная с акцентом) ───────────── */
+/* ─── СТРОКА ДЕЙСТВИЙ (кнопки внизу) ────────────────── */
+.actionRow {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+/* ─── КНОПКА ПРИКРЕПИТЬ ФОТО ──────────────────────── */
+.attachButton {
+  flex-shrink: 0;
+  width: 54px;
+  height: 54px;
+  border-radius: var(--radius-xl);
+  border: 1.5px solid var(--separator);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  cursor: pointer;
+
+  transition:
+    color        150ms ease,
+    border-color 150ms ease,
+    transform    150ms ease,
+    background   200ms ease;
+}
+
+.attachButton:active {
+  transform: scale(0.93);
+}
+
+/* Когда фото уже есть — кнопка «светится» акцентом */
+.attachButtonActive {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-muted);
+}
+
+/* ─── КНОПКА ОТПРАВИТЬ (единственная с акцентом) ───────── */
 .submitButton {
-  width: 100%;
+  flex: 1;
   height: 54px;
   border-radius: var(--radius-xl);
 
-  /* Монохромное стекло + тонкий акцент */
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -182,3 +223,187 @@
   color: var(--text-tertiary);
   transform: none !important;
 }
+
+/* ─── СКРЫТЫЙ FILE INPUT ────────────────────────────────── */
+.fileInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ─── ПРЕВЬЮ ФОТО ──────────────────────────────────────── */
+.photoPreview {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-lg);
+
+  animation: photoIn 280ms cubic-bezier(0.3, 1, 0.3, 1) both;
+}
+
+@keyframes photoIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.photoThumb {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid var(--separator);
+}
+
+.photoMeta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.photoName {
+  font-family: var(--font-round);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.photoSize {
+  font-family: var(--font-round);
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.photoRemoveBtn {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-pill);
+  background: var(--separator);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: background 150ms ease, color 150ms ease, transform 150ms ease;
+}
+
+.photoRemoveBtn:active {
+  transform: scale(0.88);
+  background: rgba(255, 55, 95, 0.15);
+  color: var(--accent);
+}
+
+/* ─── КЛИКАБЕЛЬНАЯ МИНИАТЮРА ─────────────────────────────────── */
+.photoThumbClickable {
+  cursor: zoom-in;
+  transition: transform 150ms ease, opacity 150ms ease;
+}
+
+.photoThumbClickable:active {
+  transform: scale(0.93);
+  opacity: 0.8;
+}
+
+/* ─── ЛАЙТБОКС ───────────────────────────────────────────────── */
+.lightboxOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  /* Чёрный iOS-like фон */
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(24px) saturate(120%);
+  -webkit-backdrop-filter: blur(24px) saturate(120%);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  /* Анимация появления оверлея */
+  animation: overlayIn 250ms ease both;
+}
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Кнопка ✕ в safe area сверху справа */
+.lightboxCloseBtn {
+  position: absolute;
+  top: max(env(safe-area-inset-top, 0px), 16px);
+  right: var(--space-4);
+
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  color: #ffffff;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: background 150ms ease, transform 150ms ease;
+}
+
+.lightboxCloseBtn:active {
+  background: rgba(255, 255, 255, 0.28);
+  transform: scale(0.9);
+}
+
+/* Само фото — по центру, содержится в экране */
+.lightboxImg {
+  max-width: 100%;
+  max-height: 80dvh;
+  object-fit: contain;
+  border-radius: var(--radius-lg);
+
+  /* Анимация входа: scale от миниатюры */
+  animation: imgIn 320ms cubic-bezier(0.3, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+  touch-action: none; /* отключаем скролл страницы при свайпе */
+}
+
+@keyframes imgIn {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Хинт снизу */
+.lightboxHint {
+  position: absolute;
+  bottom: max(env(safe-area-inset-bottom, 0px), 24px);
+  font-family: var(--font-round);
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.40);
+  letter-spacing: 0.02em;
+  user-select: none;
+  pointer-events: none;
+}
+

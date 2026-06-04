@@ -20,6 +20,9 @@
 
 /* Круглый свотч */
 .swatch {
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
   position: relative;
   width: 32px;
   height: 32px;
@@ -34,21 +37,33 @@
 
   transition:
     transform 150ms ease,
-    border-color 150ms ease,
-    box-shadow 150ms ease;
+    border-color 150ms ease;
+}
+
+.swatch::after {
+  content: '';
+  position: absolute;
+  /* inset: -5px creates the gap and the ring */
+  inset: -5px;
+  border-radius: inherit;
+  border: 2px solid transparent;
+  transition: border-color 150ms ease, transform 150ms ease;
+  pointer-events: none;
+  transform: scale(0.8);
 }
 
 .swatch:hover {
   transform: scale(1.12);
-  box-shadow: 0 0 0 3px rgba(0,0,0,0.10);
 }
 
 .swatchActive {
   border-color: var(--swatch-color);
-  box-shadow:
-    0 0 0 3px var(--bg-app),
-    0 0 0 5px var(--swatch-color);
   transform: scale(1.08);
+}
+
+.swatchActive::after {
+  border-color: var(--swatch-color);
+  transform: scale(1);
 }
 
 .check {

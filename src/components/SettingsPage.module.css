@@ -1,52 +1,54 @@
 /*
  * SettingsPage.module.css
  * Вся страница настроек — Apple Minimal style.
+ * Хедер встроен в скролл — страница единый поток.
  */
 
 /* ─── ОБЁРТКА ────────────────────────────────────────────────── */
 .page {
-  position: relative;
   display: flex;
   flex-direction: column;
-  flex: 1;
   height: 100dvh;
   overflow: hidden;
   background: var(--bg-app);
 }
 
-/* ─── NAV BAR ────────────────────────────────────────────────── */
-.navBar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 10;
+/* ─── КОНТЕНТ (весь скролл целиком) ─────────────────────────── */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  /* safe area сверху прямо на скролл-контейнере */
+  padding-top: max(env(safe-area-inset-top, 0px), 16px);
+}
 
-  /* safe area сверху + высота бара */
-  padding-top: max(env(safe-area-inset-top, 0px), 14px);
-  padding-bottom: 14px;
-  padding-left: var(--space-2);
-  padding-right: var(--space-4);
+.sections {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: var(--space-6);
+  gap: var(--space-8);
+}
 
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+/* ─── СТРАНИЧНЫЙ ЗАГОЛОВОК (скроллится вместе) ──────────────── */
+.pageHeader {
+  display: flex;
   align-items: center;
-
-  border-bottom: 1px solid var(--separator);
-  border-radius: 0;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-4) var(--space-6);
 }
 
 .backBtn {
   display: flex;
   align-items: center;
-  gap: var(--space-1);
+  gap: 2px;
 
   background: transparent;
   border: none;
   color: var(--accent);
   cursor: pointer;
-  padding: var(--space-2) var(--space-2);
+  padding: var(--space-2) var(--space-1);
   border-radius: var(--radius-sm);
+  flex-shrink: 0;
 
   font-family: var(--font-round);
   font-size: 17px;
@@ -59,33 +61,13 @@
   opacity: 0.5;
 }
 
-.navTitle {
+.pageTitle {
   font-family: var(--font-round);
-  font-size: 17px;
+  font-size: 28px;
   font-weight: 700;
   color: var(--text-primary);
-  text-align: center;
   margin: 0;
-}
-
-.navRight {
-  /* Пустой слот для баланса грид-разметки */
-}
-
-/* ─── КОНТЕНТ ─────────────────────────────────────────────────── */
-.content {
-  flex: 1;
-  /* отступ под navBar (~70-80px) */
-  padding-top: max(env(safe-area-inset-top, 0px), 14px);
-}
-
-.sections {
-  display: flex;
-  flex-direction: column;
-  /* Компенсируем navBar (~80px) + space */
-  padding-top: calc(80px + var(--space-5));
-  padding-bottom: var(--space-6);
-  gap: var(--space-8);
+  line-height: 1.1;
 }
 
 /* ─── СЕКЦИЯ ──────────────────────────────────────────────────── */
@@ -172,6 +154,56 @@
 }
 
 /* ─── ТЕМА ───────────────────────────────────────────────────── */
+/* Кнопка "По теме устройства" */
+.systemThemeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--space-4);
+  background: var(--glass-bg);
+  border: none;
+  cursor: pointer;
+  border-bottom: 1px solid var(--separator);
+  font-family: var(--font-round);
+}
+
+.systemThemeLabel {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.toggleSwitch {
+  width: 44px;
+  height: 26px;
+  border-radius: var(--radius-pill);
+  background: rgba(120, 120, 128, 0.16);
+  position: relative;
+  transition: background 250ms ease;
+  flex-shrink: 0;
+}
+
+.systemThemeActive .toggleSwitch {
+  background: var(--accent);
+}
+
+.toggleKnob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: transform 250ms cubic-bezier(0.3, 1, 0.3, 1);
+}
+
+.systemThemeActive .toggleKnob {
+  transform: translateX(18px);
+}
+
 .themeRow {
   display: flex;
   gap: 1px;
@@ -205,9 +237,14 @@
   background: var(--accent-muted);
 }
 
-.themeEmoji {
-  font-size: 20px;
-  line-height: 1;
+.themeIcon {
+  display: flex;
+  color: var(--text-primary);
+  transition: color 200ms ease;
+}
+
+.themeBtnActive .themeIcon {
+  color: var(--accent);
 }
 
 .themeLabel {

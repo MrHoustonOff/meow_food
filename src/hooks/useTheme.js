@@ -14,6 +14,7 @@ const DEFAULT_ACCENTS = {
 
 const STORAGE_KEYS = {
   theme:       'myau_theme',
+  systemTheme: 'myau_system_theme',
   accentLight: 'myau_accent_light',
   accentDark:  'myau_accent_dark',
 };
@@ -39,24 +40,45 @@ function applyAccent(hex) {
 }
 
 export const useTheme = () => {
-  const [theme, setThemeState] = useState(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.theme);
-    if (saved) return saved;
+  const [systemTheme, setSystemThemeState] = useState(() => {
+    return localStorage.getItem(STORAGE_KEYS.systemTheme) === 'true';
+  });
+
+  // Запоминаем ручную тему (по умолчанию light или сохранённая)
+  const [manualTheme, setManualTheme] = useState(() => {
+    return localStorage.getItem(STORAGE_KEYS.theme) || 'light';
+  });
+
+  // Отслеживаем системные предпочтения
+  const [sysPref, setSysPref] = useState(() => {
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
 
   const [accents, setAccentsState] = useState(loadAccents);
 
+  // Слушатель системной темы
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e) => {
+      setSysPref(e.matches ? 'dark' : 'light');
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  const activeTheme = systemTheme ? sysPref : manualTheme;
+
   // Применяем тему + правильный акцент
   useEffect(() => {
     const root = document.documentElement;
-    const bgColor = BG_COLORS[theme] ?? BG_COLORS.light;
+    const bgColor = BG_COLORS[activeTheme] ?? BG_COLORS.light;
 
-    root.setAttribute('data-theme', theme);
-    root.style.colorScheme = theme;
+    root.setAttribute('data-theme', activeTheme);
+    root.style.colorScheme = activeTheme;
 
     // Применяем акцент текущей темы
-    applyAccent(accents[theme]);
+    applyAccent(accents[activeTheme]);
 
     // theme-color для Safari / PWA
     const metaMain = document.getElementById('theme-color-main');
@@ -70,15 +92,23 @@ export const useTheme = () => {
       document.head.appendChild(meta);
     }
 
-    localStorage.setItem(STORAGE_KEYS.theme, theme);
-  }, [theme, accents]);
+    // Сохраняем ТОЛЬКО ручную тему в localStorage
+    localStorage.setItem(STORAGE_KEYS.theme, manualTheme);
+  }, [activeTheme, manualTheme, accents]);
 
   const setTheme = useCallback((newTheme) => {
-    setThemeState(newTheme);
-  }, []);
+    if (systemTheme) return; // Блокируем ручное изменение
+    setManualTheme(newTheme);
+  }, [systemTheme]);
 
   const toggleTheme = useCallback(() => {
-    setThemeState((prev) => (prev === 'light' ? 'dark' : 'light'));
+    if (systemTheme) return; // Блокируем ручное изменение
+    setManualTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+  }, [systemTheme]);
+
+  const setSystemTheme = useCallback((val) => {
+    localStorage.setItem(STORAGE_KEYS.systemTheme, val);
+    setSystemThemeState(val);
   }, []);
 
   /** Меняет акцент только для указанной темы */
@@ -89,10 +119,12 @@ export const useTheme = () => {
   }, []);
 
   return {
-    theme,
+    theme: activeTheme,
     accents,          // { light: '#...', dark: '#...' }
+    systemTheme,
     setTheme,
     toggleTheme,
+    setSystemTheme,
     setAccent,        // (forTheme: 'light'|'dark', hex: string) => void
   };
 };
