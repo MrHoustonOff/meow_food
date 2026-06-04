@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
 import { Settings, Sun, Moon } from 'lucide-react';
-import { useTheme } from '../hooks/useTheme';
 import styles from './Header.module.css';
 
-const Header = () => {
-  const { theme, toggleTheme } = useTheme();
+/*
+ * Header — верхняя панель главного экрана.
+ * НЕ тянет useTheme сам — получает theme/toggleTheme через пропсы,
+ * чтобы стейт жил в одном месте (App.jsx).
+ *
+ * Props:
+ *   theme       — 'light' | 'dark'
+ *   toggleTheme — () => void
+ *   onSettings  — () => void
+ */
+const Header = ({ theme, toggleTheme, onSettings }) => {
   const [settingsPressed, setSettingsPressed] = useState(false);
 
   return (
@@ -16,7 +24,7 @@ const Header = () => {
         onMouseUp={() => setSettingsPressed(false)}
         onTouchStart={() => setSettingsPressed(true)}
         onTouchEnd={() => setSettingsPressed(false)}
-        onClick={() => console.log('Open Settings')}
+        onClick={onSettings}
         aria-label="Настройки"
       >
         <Settings

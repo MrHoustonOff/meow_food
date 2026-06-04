@@ -101,10 +101,36 @@
   caret-color: var(--accent);
 
   transition: color 300ms ease;
+
+  /* По умолчанию скрол скрыт */
   scrollbar-width: none;
   -ms-overflow-style: none;
+  overflow-y: hidden;
 }
 .textarea::-webkit-scrollbar { display: none; }
+
+/* Когда поле достигло 1.5× — появляется красивый скрол */
+.textareaScrollable {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) transparent;
+}
+.textareaScrollable::-webkit-scrollbar {
+  display: block;
+  width: 4px;
+}
+.textareaScrollable::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 8px 0;
+}
+.textareaScrollable::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 99px;
+  opacity: 0.7;
+  transition: opacity 200ms ease;
+}
+.textareaScrollable::-webkit-scrollbar-thumb:hover {
+  opacity: 1;
+}
 
 .textarea::placeholder {
   color: var(--text-tertiary);

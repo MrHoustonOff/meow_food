@@ -1,0 +1,256 @@
+/*
+ * SettingsPage.module.css
+ * Вся страница настроек — Apple Minimal style.
+ */
+
+/* ─── ОБЁРТКА ────────────────────────────────────────────────── */
+.page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--bg-app);
+}
+
+/* ─── NAV BAR ────────────────────────────────────────────────── */
+.navBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+
+  /* safe area сверху + высота бара */
+  padding-top: max(env(safe-area-inset-top, 0px), 14px);
+  padding-bottom: 14px;
+  padding-left: var(--space-2);
+  padding-right: var(--space-4);
+
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+
+  border-bottom: 1px solid var(--separator);
+  border-radius: 0;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+
+  background: transparent;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  padding: var(--space-2) var(--space-2);
+  border-radius: var(--radius-sm);
+
+  font-family: var(--font-round);
+  font-size: 17px;
+  font-weight: 500;
+
+  transition: opacity 150ms ease;
+}
+
+.backBtn:active {
+  opacity: 0.5;
+}
+
+.navTitle {
+  font-family: var(--font-round);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+  margin: 0;
+}
+
+.navRight {
+  /* Пустой слот для баланса грид-разметки */
+}
+
+/* ─── КОНТЕНТ ─────────────────────────────────────────────────── */
+.content {
+  flex: 1;
+  /* отступ под navBar (~70-80px) */
+  padding-top: max(env(safe-area-inset-top, 0px), 14px);
+}
+
+.sections {
+  display: flex;
+  flex-direction: column;
+  /* Компенсируем navBar (~80px) + space */
+  padding-top: calc(80px + var(--space-5));
+  padding-bottom: var(--space-6);
+  gap: var(--space-8);
+}
+
+/* ─── СЕКЦИЯ ──────────────────────────────────────────────────── */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sectionTitle {
+  font-family: var(--font-round);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  padding: 0 var(--space-2);
+  margin: 0;
+}
+
+/* ─── ОБЩАЯ КАРТОЧКА ─────────────────────────────────────────── */
+.card {
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+/* ─── ПРОВАЙДЕР ──────────────────────────────────────────────── */
+.providerRow {
+  display: flex;
+  gap: 1px;
+  background: var(--separator);
+}
+
+.providerBtn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-4) var(--space-3);
+
+  background: var(--glass-bg);
+  border: none;
+  cursor: pointer;
+
+  font-family: var(--font-round);
+  transition: background 200ms ease;
+}
+
+.providerBtn:first-child {
+  border-radius: var(--radius-xl) 0 0 var(--radius-xl);
+}
+.providerBtn:last-child {
+  border-radius: 0 var(--radius-xl) var(--radius-xl) 0;
+}
+
+.providerActive {
+  background: var(--accent-muted);
+}
+
+.providerLabel {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  transition: color 200ms ease;
+}
+
+.providerActive .providerLabel {
+  color: var(--accent);
+}
+
+.providerBadge {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  letter-spacing: 0.04em;
+}
+
+/* ─── ПОЛЯ ВВОДА ─────────────────────────────────────────────── */
+.fieldsStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ─── ТЕМА ───────────────────────────────────────────────────── */
+.themeRow {
+  display: flex;
+  gap: 1px;
+  background: var(--separator);
+}
+
+.themeBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-4);
+
+  background: var(--glass-bg);
+  border: none;
+  cursor: pointer;
+
+  font-family: var(--font-round);
+  transition: background 200ms ease;
+}
+
+.themeBtn:first-child {
+  border-radius: var(--radius-xl) 0 0 var(--radius-xl);
+}
+.themeBtn:last-child {
+  border-radius: 0 var(--radius-xl) var(--radius-xl) 0;
+}
+
+.themeBtnActive {
+  background: var(--accent-muted);
+}
+
+.themeEmoji {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.themeLabel {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: color 200ms ease;
+}
+
+.themeBtnActive .themeLabel {
+  color: var(--accent);
+}
+
+/* ─── БЛОК АКЦЕНТА ───────────────────────────────────────────── */
+.accentBlock {
+  border-radius: var(--radius-xl);
+  padding: var(--space-4) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.accentHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.accentLabel {
+  font-family: var(--font-round);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.accentBadgeActive {
+  font-family: var(--font-round);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-muted);
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+}

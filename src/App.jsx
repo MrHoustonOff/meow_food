@@ -1,6 +1,9 @@
 import React, { useState, useRef } from 'react';
 import Header from './components/Header';
+import SettingsPage from './components/SettingsPage';
 import { Send, Cat } from 'lucide-react';
+import { useTheme } from './hooks/useTheme';
+import { useSettings } from './hooks/useSettings';
 import styles from './App.module.css';
 
 /* ─── КОНТЕКСТНЫЕ ПРИВЕТСТВИЯ ─────────────────────────────────── */
@@ -28,20 +31,49 @@ function getGreeting() {
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
+const BASE_HEIGHT_MULTIPLIER = 1.5;
+
 function App() {
+  // ── Глобальный стейт ──────────────────────────────────────────
+  const { theme, accents, setTheme, toggleTheme, setAccent } = useTheme();
+  const { settings, updateField } = useSettings();
+
+  // ── Навигация ──────────────────────────────────────────────────
+  const [view, setView] = useState('home'); // 'home' | 'settings'
+
+  // ── Главный экран ──────────────────────────────────────────────
   const [text, setText] = useState('');
   const [greeting] = useState(getGreeting);
   const [placeholder] = useState(
     () => PLACEHOLDERS[Math.floor(Math.random() * PLACEHOLDERS.length)]
   );
   const textareaRef = useRef(null);
+  const baseHeightRef = useRef(null);
 
   const handleInput = (e) => {
     setText(e.target.value);
     const ta = textareaRef.current;
-    if (ta) {
-      ta.style.height = 'auto';
-      ta.style.height = `${ta.scrollHeight}px`;
+    if (!ta) return;
+
+    ta.style.height = 'auto';
+    ta.style.overflowY = 'hidden';
+
+    if (baseHeightRef.current === null) {
+      baseHeightRef.current = ta.scrollHeight;
+    }
+
+    const base = baseHeightRef.current;
+    const maxH = Math.round(base * BASE_HEIGHT_MULTIPLIER);
+    const desired = ta.scrollHeight;
+
+    if (desired <= maxH) {
+      ta.style.height = `${desired}px`;
+      ta.style.overflowY = 'hidden';
+      ta.classList.remove(styles.textareaScrollable);
+    } else {
+      ta.style.height = `${maxH}px`;
+      ta.style.overflowY = 'scroll';
+      ta.classList.add(styles.textareaScrollable);
     }
   };
 
@@ -50,11 +82,30 @@ function App() {
     console.log('Отправляем:', text);
   };
 
+  // ── Страница настроек ─────────────────────────────────────────
+  if (view === 'settings') {
+    return (
+      <SettingsPage
+        onBack={() => setView('home')}
+        settings={settings}
+        updateField={updateField}
+        theme={theme}
+        setTheme={setTheme}
+        accents={accents}
+        setAccent={setAccent}
+      />
+    );
+  }
+
+  // ── Главный экран ─────────────────────────────────────────────
   return (
     <div className="screen">
-      {/* position:relative — хедер absolute прикрепляется сюда */}
       <div className={styles.screenInner}>
-        <Header />
+        <Header
+          theme={theme}
+          toggleTheme={toggleTheme}
+          onSettings={() => setView('settings')}
+        />
 
         <main className={`scroll-area ${styles.main}`}>
           <div className={`container safe-bottom ${styles.content}`}>
@@ -106,4 +157,3 @@ function App() {
 }
 
 export default App;
-
