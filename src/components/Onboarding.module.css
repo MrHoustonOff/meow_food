@@ -1,0 +1,205 @@
+.onboardingContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100%;
+  background: var(--bg-app);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: var(--font-round);
+}
+
+.slide {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  text-align: center;
+  animation: slideFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+@keyframes slideFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.asciiCat {
+  font-family: 'SF Mono', Consolas, Menlo, monospace;
+  font-size: 24px;
+  line-height: 1.2;
+  color: var(--text-primary);
+  white-space: pre;
+  margin-bottom: var(--space-6);
+}
+
+.catBreathe {
+  animation: breathe 2.5s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+.catJump {
+  animation: jump 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+}
+
+@keyframes jump {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+.title {
+  font-size: var(--text-title-2);
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+  line-height: 1.2;
+}
+
+.text {
+  font-size: var(--text-body);
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: var(--space-6);
+}
+
+.button {
+  width: 100%;
+  max-width: 280px;
+  height: 56px;
+  border-radius: var(--radius-xl);
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-round);
+  font-size: 18px;
+  font-weight: 800;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-accent);
+  animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation-delay: 0.3s;
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  filter: grayscale(1);
+  box-shadow: none;
+}
+
+.buttonOutline {
+  background: transparent;
+  color: var(--accent);
+  border: 2px solid var(--accent);
+  box-shadow: none;
+}
+
+.buttonLink {
+  background: transparent;
+  color: var(--accent);
+  border: none;
+  box-shadow: none;
+  font-weight: 700;
+  text-decoration: underline;
+  height: auto;
+  margin-bottom: var(--space-4);
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.formContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+  text-align: left;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-left: 4px;
+}
+
+.input {
+  width: 100%;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--separator);
+  background: var(--surface-bg);
+  padding: 0 var(--space-3);
+  font-family: 'SF Mono', Consolas, Menlo, monospace;
+  font-size: 14px;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255, 166, 201, 0.2);
+}
+
+.toast {
+  position: absolute;
+  bottom: var(--space-6);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-full);
+  color: var(--accent-2);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--separator);
+  z-index: 10;
+  animation: toastUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  white-space: nowrap;
+}
+
+@keyframes toastUp {
+  from { opacity: 0; transform: translate(-50%, 20px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}

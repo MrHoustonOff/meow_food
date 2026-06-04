@@ -314,6 +314,23 @@ const SettingsPage = ({
               >
                 Отправить тестовый запрос 🐾
               </button>
+              
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0 var(--space-2)' }}>
+                <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)' }}>Dev Mode: Вечный онбординг</span>
+                <input 
+                  type="checkbox"
+                  checked={localStorage.getItem('myau_dev_force_onboarding') === 'true'}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      localStorage.setItem('myau_dev_force_onboarding', 'true');
+                    } else {
+                      localStorage.removeItem('myau_dev_force_onboarding');
+                    }
+                    window.location.reload();
+                  }}
+                  style={{ width: '20px', height: '20px', accentColor: 'var(--accent)' }}
+                />
+              </div>
 
               <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-tertiary)', fontWeight: '600' }}>
                 Мяувник v0.8

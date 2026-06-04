@@ -9,6 +9,7 @@ import AiErrorModal from './components/AiErrorModal';
 import TgErrorModal from './components/TgErrorModal';
 import SuccessCopyModal from './components/SuccessCopyModal';
 import TgSuccessModal from './components/TgSuccessModal';
+import Onboarding from './components/Onboarding';
 import { Send, Cat, Paperclip, X } from 'lucide-react';
 import { useTheme } from './hooks/useTheme';
 import { useSettings } from './hooks/useSettings';
@@ -53,12 +54,24 @@ function App() {
   const { theme, accents, systemTheme, setTheme, toggleTheme, setSystemTheme, setAccent } = useTheme();
   const { settings, updateField } = useSettings();
 
+  // ── Onboarding ─────────────────────────────────────────────────
+  const [isOnboardingComplete, setIsOnboardingComplete] = useState(() => {
+    const isComplete = localStorage.getItem('myau_onboarding_complete') === 'true';
+    const forceDev = localStorage.getItem('myau_dev_force_onboarding') === 'true';
+    if (forceDev) return false;
+    return isComplete;
+  });
+
   // ── Навигация ──────────────────────────────────────────────────
   const [view, setView] = useState('home'); // 'home' | 'settings'
 
   // ── Фаза основного flow ────────────────────────────────────────
   // 'idle' | 'ai_loading' | 'preview' | 'tg_sending'
   const [phase, setPhase] = useState('idle');
+
+  if (!isOnboardingComplete) {
+    return <Onboarding onComplete={() => setIsOnboardingComplete(true)} />;
+  }
 
   // ── Результат ИИ ──────────────────────────────────────────────
   const [aiResult, setAiResult] = useState(null);  // parsed JSON
