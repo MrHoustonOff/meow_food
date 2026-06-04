@@ -42,7 +42,7 @@ function formatTgPreview(data) {
     data.foods.forEach(f => {
       msg += `• ${f.name} — ${f.amount}\n`;
       if (f.macros) {
-        msg += `  Б: ${f.macros.proteins} Ж: ${f.macros.fats} У: ${f.macros.carbs} | ${f.macros.calories} ккал\n`;
+        msg += `  Б: ${f.macros.proteins} Ж: ${f.macros.fats} У: ${f.macros.carbs} | ${f.macros.calories} ккал (на 100г)\n`;
       }
     });
     msg += '\n';
@@ -246,7 +246,7 @@ function PreviewPage({
                       <span className={styles.macroBadge}>Б: {food.macros.proteins}</span>
                       <span className={styles.macroBadge}>Ж: {food.macros.fats}</span>
                       <span className={styles.macroBadge}>У: {food.macros.carbs}</span>
-                      <span className={styles.macroBadge}>{food.macros.calories} ккал</span>
+                      <span className={styles.macroBadge}>{food.macros.calories} ккал (на 100г)</span>
                     </div>
                   )}
                 </div>
