@@ -105,16 +105,28 @@ const SettingsPage = ({
                       onChange={(val) => updateField('aiKey', val)}
                       placeholder="gsk_••••••••••••••••"
                     />
-                    <div className={styles.fieldGroup}>
-                      <span className={styles.fieldLabel}>Основная модель</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
+                      <span style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-secondary)', marginLeft: 'var(--space-2)' }}>
+                        Основная модель
+                      </span>
                       <select 
-                        className={styles.input} 
                         value={settings.groqModel || 'llama-3.3-70b-versatile'}
                         onChange={(e) => updateField('groqModel', e.target.value)}
-                        style={{ fontFamily: 'var(--font-round)' }}
+                        style={{ 
+                          fontFamily: 'var(--font-round)', 
+                          width: '100%', 
+                          padding: '12px 16px', 
+                          borderRadius: 'var(--radius-lg)', 
+                          background: 'var(--bg-app)', 
+                          border: '1px solid var(--separator)', 
+                          color: 'var(--text-primary)', 
+                          fontSize: '16px',
+                          outline: 'none',
+                          cursor: 'pointer'
+                        }}
                       >
-                        <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile (Умная, может падать)</option>
-                        <option value="llama-3.1-8b-instant">llama-3.1-8b-instant (Быстрая, стабильная)</option>
+                        <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile</option>
+                        <option value="llama-3.1-8b-instant">llama-3.1-8b-instant</option>
                       </select>
                     </div>
 
