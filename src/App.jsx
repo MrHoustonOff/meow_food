@@ -8,6 +8,7 @@ import ValidationModal from './components/ValidationModal';
 import AiErrorModal from './components/AiErrorModal';
 import TgErrorModal from './components/TgErrorModal';
 import SuccessCopyModal from './components/SuccessCopyModal';
+import TgSuccessModal from './components/TgSuccessModal';
 import { Send, Cat, Paperclip, X } from 'lucide-react';
 import { useTheme } from './hooks/useTheme';
 import { useSettings } from './hooks/useSettings';
@@ -72,6 +73,7 @@ function App() {
   const [tgErrorText, setTgErrorText] = useState(null);
   const [lastTgData, setLastTgData] = useState(null); // Для кнопки копирования
   const [showCopyModal, setShowCopyModal] = useState(false);
+  const [showTgSuccess, setShowTgSuccess] = useState(false);
 
   // ── Главный экран ──────────────────────────────────────────────
   const [text, setText] = useState('');
@@ -274,6 +276,7 @@ function App() {
       setAiResult(null);
       setRawText('');
       setPhase('idle');
+      setShowTgSuccess(true);
 
       // Сбрасываем textarea height
       const ta = textareaRef.current;
@@ -529,8 +532,14 @@ function App() {
         formattedText={lastTgData || ''}
         onCopy={() => {
           if (lastTgData) navigator.clipboard.writeText(lastTgData).catch(()=>{});
+          setShowCopyModal(false);
         }}
         onHome={() => setShowCopyModal(false)}
+      />
+
+      <TgSuccessModal
+        open={showTgSuccess}
+        onHome={() => setShowTgSuccess(false)}
       />
     </div>
   );
