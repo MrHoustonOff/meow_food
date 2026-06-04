@@ -1,61 +1,56 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Settings, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
+import styles from './Header.module.css';
 
 const Header = () => {
   const { theme, toggleTheme } = useTheme();
+  const [settingsPressed, setSettingsPressed] = useState(false);
 
   return (
-    <header style={styles.header}>
-      <button style={styles.iconButton} onClick={() => console.log('Open Settings')}>
-        <Settings size={22} color="var(--text)" strokeWidth={2.2} />
+    <header className={styles.header}>
+      <button
+        id="btn-settings"
+        className={`${styles.iconButton} pressable no-select glass-mid`}
+        onMouseDown={() => setSettingsPressed(true)}
+        onMouseUp={() => setSettingsPressed(false)}
+        onTouchStart={() => setSettingsPressed(true)}
+        onTouchEnd={() => setSettingsPressed(false)}
+        onClick={() => console.log('Open Settings')}
+        aria-label="Настройки"
+      >
+        <Settings
+          size={20}
+          strokeWidth={2}
+          className={styles.icon}
+          style={{ opacity: settingsPressed ? 0.6 : 1 }}
+        />
       </button>
 
-      <button style={styles.iconButton} onClick={toggleTheme}>
+      <button
+        id="btn-theme-toggle"
+        className={`${styles.iconButton} pressable no-select glass-mid`}
+        onClick={toggleTheme}
+        aria-label={theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'}
+      >
         {theme === 'light' ? (
-          <Sun size={22} color="var(--accent-2)" style={styles.sunIcon} strokeWidth={2.2} />
+          <Sun
+            size={19}
+            strokeWidth={2}
+            className={styles.iconTheme}
+            style={{ animation: 'sunSpin 400ms var(--ease-spring) both' }}
+          />
         ) : (
-          <Moon size={22} color="var(--accent)" style={styles.moonIcon} strokeWidth={2.2} />
+          <Moon
+            size={19}
+            strokeWidth={2}
+            className={styles.iconTheme}
+            style={{ animation: 'moonAppear 400ms var(--ease-spring) both' }}
+          />
         )}
       </button>
     </header>
   );
-};
-
-const styles = {
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '24px 20px 12px 20px', // Умеренный отступ сверху
-    position: 'absolute', // Теперь он часть скролла
-    top: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'transparent',
-    zIndex: 100,
-  },
-  iconButton: {
-    width: '46px',
-    height: '46px',
-    borderRadius: '23px',
-    backgroundColor: 'var(--glass-bg)',
-    backdropFilter: 'blur(16px) saturate(180%)',
-    WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    transition: 'all 300ms var(--transition-base)',
-    border: '1px solid var(--glass-border)',
-    boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
-    cursor: 'pointer',
-  },
-  sunIcon: {
-    animation: 'rotateScale 400ms var(--transition-base)',
-  },
-  moonIcon: {
-    animation: 'appearScale 400ms var(--transition-base)',
-  },
 };
 
 export default Header;

@@ -1,26 +1,43 @@
 import { useState, useEffect } from 'react';
 
+// Должны совпадать с --bg-app в tokens.css
+const BG_COLORS = {
+  light: '#F2F2F7',
+  dark:  '#000000',
+};
+
 export const useTheme = () => {
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('myau_theme') || 'light';
+    const saved = localStorage.getItem('myau_theme');
+    if (saved) return saved;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('myau_theme', theme);
-    
-    // Обновляем цвет статус-бара для Safari iOS
-    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
-    const color = theme === 'light' ? '#FAFAF7' : '#1A1A1F';
-    
-    if (metaThemeColor) {
-      metaThemeColor.setAttribute('content', color);
+    const root = document.documentElement;
+    const bgColor = BG_COLORS[theme] ?? BG_COLORS.light;
+
+    // 1. data-theme — CSS-переменные переключаются здесь автоматически,
+    //    включая html { background-color: var(--bg-app) } из reset.css
+    root.setAttribute('data-theme', theme);
+
+    // 2. color-scheme — браузер перекрашивает нативные элементы,
+    //    скроллбары и safe-area зоны
+    root.style.colorScheme = theme;
+
+    // 3. theme-color мета-тег — статус-бар и адресная строка Safari
+    const metaMain = document.getElementById('theme-color-main');
+    if (metaMain) {
+      metaMain.setAttribute('content', bgColor);
     } else {
       const meta = document.createElement('meta');
       meta.name = 'theme-color';
-      meta.content = color;
+      meta.id = 'theme-color-main';
+      meta.content = bgColor;
       document.head.appendChild(meta);
     }
+
+    localStorage.setItem('myau_theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {
@@ -29,3 +46,4 @@ export const useTheme = () => {
 
   return { theme, toggleTheme };
 };
+

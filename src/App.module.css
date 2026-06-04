@@ -1,0 +1,158 @@
+/*
+ * App.module.css — главный экран
+ * Монохром. Один акцент (--accent) — только на кнопке отправки.
+ * Никаких градиентов, никаких цветных блобов.
+ */
+
+/* Обёртка с position:relative — для absolute Header */
+.screenInner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  height: 100dvh;
+}
+
+.main {
+  flex: 1;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  /* Хедер фиксированный ~70px, добавляем отступ */
+  padding-top: calc(var(--space-3) + 70px);
+  padding-bottom: var(--space-6);
+  gap: var(--space-8);
+  min-height: 100%;
+}
+
+/* ─── HERO ─────────────────────────────────────────────────── */
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-5);
+  padding-top: var(--space-4);
+}
+
+.catAvatar {
+  width: 84px;
+  height: 84px;
+  border-radius: var(--radius-2xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  /* Монохромная тень — без цвета */
+  box-shadow: var(--shadow-md);
+}
+
+.catIcon {
+  color: var(--accent);
+  transition: color 300ms ease;
+}
+
+.greeting {
+  color: var(--text-primary);
+  max-width: 260px;
+  line-height: var(--leading-snug);
+  font-weight: 600;
+}
+
+/* ─── ВВОД ──────────────────────────────────────────────────── */
+.inputSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  flex: 1;
+}
+
+.inputWrap {
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  /* Фокус-кольцо через :focus-within — акцент */
+  transition: box-shadow 200ms ease;
+}
+
+.inputWrap:focus-within {
+  box-shadow:
+    0 0 0 2px var(--accent),
+    var(--shadow-sm);
+}
+
+.textarea {
+  display: block;
+  width: 100%;
+  min-height: 200px;
+  padding: var(--space-5);
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+
+  font-family: var(--font-round);
+  font-size: 17px; /* iOS: минимум для предотвращения зума */
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--text-primary);
+  caret-color: var(--accent);
+
+  transition: color 300ms ease;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.textarea::-webkit-scrollbar { display: none; }
+
+.textarea::placeholder {
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+/* ─── КНОПКА ОТПРАВИТЬ (единственная с акцентом) ───────────── */
+.submitButton {
+  width: 100%;
+  height: 54px;
+  border-radius: var(--radius-xl);
+
+  /* Монохромное стекло + тонкий акцент */
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1.5px solid var(--accent);
+  box-shadow: var(--shadow-accent);
+
+  font-family: var(--font-round);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--accent);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+
+  transition:
+    opacity     150ms ease,
+    transform   150ms ease,
+    box-shadow  200ms ease,
+    background  200ms ease;
+}
+
+.submitButton:not(:disabled):active {
+  transform: scale(0.97);
+  background: var(--accent-muted);
+  box-shadow: none;
+}
+
+.submitButton:disabled {
+  opacity: 0.30;
+  cursor: not-allowed;
+  box-shadow: none;
+  border-color: var(--separator);
+  color: var(--text-tertiary);
+  transform: none !important;
+}

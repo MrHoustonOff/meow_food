@@ -1,0 +1,59 @@
+/*
+ * Header.module.css
+ * Хедер — абсолютный, прозрачный, поверх scroll-area.
+ * Кнопки — монохромное стекло. Никаких цветных акцентов.
+ */
+
+.header {
+  /* Поверх контента, не блокирует скролл */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  /* safe-area уже в scroll-area, здесь только боковые отступы */
+  padding: var(--space-3) var(--space-5);
+  padding-top: max(var(--space-3), env(safe-area-inset-top));
+
+  /* Хедер прозрачный — фон от .screen просвечивает */
+  background: transparent;
+
+  /* Кнопки перехватывают touch */
+  pointer-events: none;
+}
+
+.iconButton {
+  pointer-events: all;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* glass-mid придёт из глобальных классов */
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform 150ms ease,
+    opacity   150ms ease;
+}
+
+.iconButton:active {
+  transform: scale(0.92);
+  opacity: 0.7;
+}
+
+.icon {
+  color: var(--text-primary);
+  transition: color 300ms ease;
+}
+
+/* Иконка темы — единственный цвет в хедере */
+.iconTheme {
+  color: var(--accent);
+  transition: color 300ms ease;
+}

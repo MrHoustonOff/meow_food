@@ -1,0 +1,122 @@
+/*
+ * ============================================================
+ * DESIGN TOKENS — meow_food
+ * Apple Ultra Minimal: 1 акцент, монохром, максимум стекла.
+ * Правило: если добавляешь второй акцент — ты сломал систему.
+ * ============================================================
+ */
+
+/* ─── СВЕТЛАЯ ТЕМА ───────────────────────────────────────────── */
+:root {
+  color-scheme: light;
+
+  /* ── Фон (Apple system colors) ── */
+  --bg-app:       #F2F2F7;   /* Apple "systemGroupedBackground" */
+  --bg-surface:   #FFFFFF;   /* Карточки, листы */
+  --bg-surface-2: #F2F2F7;   /* Вложенные секции */
+  --bg-elevated:  #FFFFFF;   /* Модалки, поповеры */
+
+  /* ── ЕДИНСТВЕННЫЙ АКЦЕНТ ── */
+  --accent:       #FF375F;   /* Apple "systemPink" — только он */
+  --accent-muted: rgba(255, 55, 95, 0.12); /* Фоны с акцентом */
+  --accent-glow:  rgba(255, 55, 95, 0.25); /* Свечение кнопок */
+
+  /* ── Текст (Apple HIG) ── */
+  --text-primary:   #000000;
+  --text-secondary: rgba(60, 60, 67, 0.60);
+  --text-tertiary:  rgba(60, 60, 67, 0.30);
+  --text-on-accent: #FFFFFF;
+
+  /* ── Разделители ── */
+  --separator:      rgba(60, 60, 67, 0.12);
+  --separator-opaque: #C6C6C8;
+
+  /* ── Стекло (Liquid Glass — светлое) ── */
+  --glass-bg:       rgba(255, 255, 255, 0.72);
+  --glass-bg-thin:  rgba(255, 255, 255, 0.52);
+  --glass-bg-thick: rgba(255, 255, 255, 0.88);
+  --glass-border:   rgba(255, 255, 255, 0.90);
+  --glass-border-mid: rgba(0, 0, 0, 0.08);
+  --glass-blur:     blur(20px) saturate(180%);
+  --glass-blur-sm:  blur(10px) saturate(160%);
+  --glass-blur-lg:  blur(40px) saturate(200%);
+
+  /* ── Тени (очень тихие в светлой теме) ── */
+  --shadow-xs:  0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm:  0 2px 8px rgba(0, 0, 0, 0.06),  0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md:  0 4px 16px rgba(0, 0, 0, 0.08),  0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-lg:  0 8px 32px rgba(0, 0, 0, 0.10),  0 4px 8px rgba(0, 0, 0, 0.04);
+  --shadow-accent: 0 4px 20px var(--accent-glow);
+
+  /* ── Радиусы (Apple-style) ── */
+  --radius-xs:   6px;
+  --radius-sm:  10px;
+  --radius-md:  14px;
+  --radius-lg:  20px;
+  --radius-xl:  26px;
+  --radius-2xl: 36px;
+  --radius-pill: 9999px;
+
+  /* ── Отступы ── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ── Safe area ── */
+  --safe-top:    env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left:   env(safe-area-inset-left, 0px);
+  --safe-right:  env(safe-area-inset-right, 0px);
+}
+
+/* ─── ТЁМНАЯ ТЕМА (Apple true dark) ─────────────────────────── */
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* ── Фон ── */
+  --bg-app:       #000000;   /* True black — OLED friendly */
+  --bg-surface:   #1C1C1E;   /* Apple "systemBackground" dark */
+  --bg-surface-2: #2C2C2E;   /* Apple "secondarySystemBackground" dark */
+  --bg-elevated:  #3A3A3C;   /* Apple "tertiarySystemBackground" dark */
+
+  /* ── Акцент (немного теплее в тёмном) ── */
+  --accent:       #FF375F;
+  --accent-muted: rgba(255, 55, 95, 0.18);
+  --accent-glow:  rgba(255, 55, 95, 0.30);
+
+  /* ── Текст ── */
+  --text-primary:   #FFFFFF;
+  --text-secondary: rgba(235, 235, 245, 0.60);
+  --text-tertiary:  rgba(235, 235, 245, 0.30);
+  --text-on-accent: #FFFFFF;
+
+  /* ── Разделители ── */
+  --separator:      rgba(84, 84, 88, 0.65);
+  --separator-opaque: #38383A;
+
+  /* ── Стекло (тёмное) ── */
+  --glass-bg:       rgba(28, 28, 30, 0.80);
+  --glass-bg-thin:  rgba(28, 28, 30, 0.60);
+  --glass-bg-thick: rgba(28, 28, 30, 0.92);
+  --glass-border:   rgba(255, 255, 255, 0.08);
+  --glass-border-mid: rgba(255, 255, 255, 0.12);
+  --glass-blur:     blur(20px) saturate(180%);
+  --glass-blur-sm:  blur(10px) saturate(160%);
+  --glass-blur-lg:  blur(40px) saturate(200%);
+
+  /* ── Тени (глубже в тёмном) ── */
+  --shadow-xs:  0 1px 2px rgba(0, 0, 0, 0.30);
+  --shadow-sm:  0 2px 8px rgba(0, 0, 0, 0.45),  0 1px 2px rgba(0, 0, 0, 0.30);
+  --shadow-md:  0 4px 16px rgba(0, 0, 0, 0.55),  0 2px 4px rgba(0, 0, 0, 0.30);
+  --shadow-lg:  0 8px 32px rgba(0, 0, 0, 0.65),  0 4px 8px rgba(0, 0, 0, 0.30);
+  --shadow-accent: 0 4px 20px var(--accent-glow);
+
+  /* Радиусы и отступы наследуются от :root */
+}

@@ -1,0 +1,79 @@
+/*
+ * ============================================================
+ * RESET — meow_food
+ * Минимальный сброс для iOS Safari. НЕ добавляй сюда ничего
+ * стилистического — только нейтрализация браузерных дефолтов.
+ * ============================================================
+ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  /* Предотвращает зум при фокусе на инпутах в iOS */
+  -webkit-text-size-adjust: 100%;
+  /* Делает прокрутку плавной */
+  scroll-behavior: smooth;
+
+  /*
+   * КРИТИЧНО для iOS Safari:
+   * Белая зона сверху/снизу — это background самого <html>,
+   * не <body> и не #root. data-theme висит на этом же элементе,
+   * поэтому var(--bg-app) переключается мгновенно без JS.
+   */
+  background-color: var(--bg-app);
+  transition: background-color 400ms ease;
+}
+
+body {
+  /* Убирает bounce-эффект только на body, сохраняя в scroll-контейнерах */
+  overscroll-behavior: none;
+  /* Скрытие горизонтального переполнения */
+  overflow-x: hidden;
+  /* Сглаживание шрифтов */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Убирает выделение тапом в iOS */
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+input, textarea, select {
+  /* Предотвращает зум iOS при фокусе (минимум 16px) */
+  font-size: 16px;
+  border: none;
+  background: none;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img, video, svg {
+  display: block;
+  max-width: 100%;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+/* Предотвращает выделение текста при быстрых тапах */
+.no-select {
+  -webkit-user-select: none;
+  user-select: none;
+}

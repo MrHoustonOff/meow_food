@@ -1,0 +1,59 @@
+/*
+ * ============================================================
+ * GLASS — meow_food  (Liquid Glass — монохромный)
+ * Три уровня: тонкий / средний / плотный.
+ * Никаких цветных вариантов — только прозрачность и блур.
+ * Акцент добавляется через accent-* классы и только один.
+ * ============================================================
+ */
+
+/* ─── ТОНКИЙ — фоны, оверлеи ────────────────────────────────── */
+.glass-thin {
+  background:              var(--glass-bg-thin);
+  backdrop-filter:         var(--glass-blur-sm);
+  -webkit-backdrop-filter: var(--glass-blur-sm);
+  border: 1px solid var(--glass-border);
+}
+
+/* ─── СРЕДНИЙ — карточки, кнопки (основной) ─────────────────── */
+.glass-mid {
+  background:              var(--glass-bg);
+  backdrop-filter:         var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border-mid);
+}
+
+/* ─── ПЛОТНЫЙ — Bottom Sheet, модалки ───────────────────────── */
+.glass-thick {
+  background:              var(--glass-bg-thick);
+  backdrop-filter:         var(--glass-blur-lg);
+  -webkit-backdrop-filter: var(--glass-blur-lg);
+  border: 1px solid var(--glass-border);
+}
+
+/* ─── АКЦЕНТНЫЙ — ТОЛЬКО для главной кнопки ─────────────────── */
+/*
+ * Монохромный: сам блок прозрачный, акцент только в border + glow.
+ * НЕ использовать для декоративных элементов.
+ */
+.glass-accent-btn {
+  background:              var(--accent-muted);
+  backdrop-filter:         var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255, 55, 95, 0.25);
+  box-shadow: var(--shadow-accent), inset 0 1px 0 rgba(255,255,255,0.20);
+  color: var(--accent);
+}
+
+/* ─── СВЕЧЕНИЕ (добавлять к любому) ─────────────────────────── */
+.glass-glow {
+  box-shadow:
+    inset 0 1px 0 var(--glass-border),
+    var(--shadow-sm);
+}
+
+/* ─── ТЁМНЫЕ ПЕРЕОПРЕДЕЛЕНИЯ ─────────────────────────────────── */
+/* (переменные уже делают это, этот блок — для специфичных случаев) */
+[data-theme='dark'] .glass-mid {
+  border-color: var(--glass-border);
+}

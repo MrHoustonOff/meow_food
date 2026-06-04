@@ -1,0 +1,128 @@
+/*
+ * ============================================================
+ * TYPOGRAPHY — meow_food
+ * Вся типографика приложения. Используй классы, не inline.
+ * Шрифт: SF Pro (системный Apple) → fallback Nunito
+ * ============================================================
+ */
+
+/* ─── СТЕК ШРИФТОВ ─────────────────────────────────────────── */
+:root {
+  --font-sans: -apple-system, 'SF Pro Text', 'Nunito', 'Helvetica Neue', sans-serif;
+  --font-round:'Nunito', -apple-system, 'Helvetica Neue', sans-serif; /* Мягкий, кошачий */
+  --font-mono: 'SF Mono', 'Fira Code', monospace;
+
+  /* ── Размеры (Apple HIG) ── */
+  --text-xs:   11px;   /* Caption 2 */
+  --text-sm:   13px;   /* Caption 1 / Footnote */
+  --text-base: 15px;   /* Body (iOS default) */
+  --text-md:   17px;   /* Body large */
+  --text-lg:   20px;   /* Callout large */
+  --text-xl:   24px;   /* Title 3 */
+  --text-2xl:  28px;   /* Title 2 */
+  --text-3xl:  34px;   /* Title 1 */
+  --text-4xl:  40px;   /* Large Title */
+  --text-hero: 56px;   /* Герой */
+
+  /* ── Веса ── */
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semibold:600;
+  --weight-bold:    700;
+  --weight-heavy:   800;
+
+  /* ── Межстрочные интервалы ── */
+  --leading-tight:  1.2;
+  --leading-snug:   1.35;
+  --leading-normal: 1.5;
+  --leading-relaxed:1.65;
+
+  /* ── Трекинг ── */
+  --tracking-tight: -0.04em;
+  --tracking-snug:  -0.02em;
+  --tracking-normal: 0em;
+  --tracking-wide:   0.02em;
+  --tracking-wider:  0.05em;
+}
+
+/* ─── УТИЛИТАРНЫЕ КЛАССЫ ────────────────────────────────────── */
+
+/* Заголовки */
+.text-hero {
+  font-family: var(--font-round);
+  font-size: var(--text-hero);
+  font-weight: var(--weight-heavy);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-tight);
+}
+.text-title-1 {
+  font-family: var(--font-round);
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-snug);
+  line-height: var(--leading-tight);
+}
+.text-title-2 {
+  font-family: var(--font-round);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-snug);
+  line-height: var(--leading-tight);
+}
+.text-title-3 {
+  font-family: var(--font-round);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-snug);
+  line-height: var(--leading-snug);
+}
+
+/* Тело */
+.text-body-large {
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-normal);
+  line-height: var(--leading-normal);
+}
+.text-body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-normal);
+  line-height: var(--leading-normal);
+}
+
+/* Метки */
+.text-label {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  line-height: var(--leading-snug);
+  text-transform: uppercase;
+}
+.text-caption {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-normal);
+  line-height: var(--leading-normal);
+  color: var(--text-secondary);
+}
+.text-caption-2 {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-normal);
+  line-height: var(--leading-normal);
+  color: var(--text-tertiary);
+}
+
+/* Специальные */
+.text-gradient {
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

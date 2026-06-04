@@ -3,7 +3,36 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Viewport: iOS Safari PWA обязательно viewport-fit=cover -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+
+    <!-- Apple PWA мета-теги -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Мяу-дневник" />
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <!-- theme-color: браузер читает media-query и выбирает нужный.
+         Значения ДОЛЖНЫ совпадать с --bg-app в tokens.css -->
+    <meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#F2F2F7" id="theme-color-main" />
+
+    <script>
+      (function() {
+        var saved = localStorage.getItem('myau_theme');
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = saved || (prefersDark ? 'dark' : 'light');
+        var bg = theme === 'dark' ? '#000000' : '#F2F2F7';
+        document.documentElement.setAttribute('data-theme', theme);
+        document.documentElement.style.backgroundColor = bg;
+        document.documentElement.style.colorScheme = theme;
+        var meta = document.getElementById('theme-color-main');
+        if (meta) meta.setAttribute('content', bg);
+      })();
+    </script>
+
     <title>Мяу-дневник 🐱</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
