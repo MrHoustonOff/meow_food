@@ -4,6 +4,9 @@ import SettingsPage from './components/SettingsPage';
 import LoadingOverlay from './components/LoadingOverlay';
 import PreviewPage from './components/PreviewPage';
 import ConfirmBackModal from './components/ConfirmBackModal';
+import ValidationModal from './components/ValidationModal';
+import AiErrorModal from './components/AiErrorModal';
+import TgErrorModal from './components/TgErrorModal';
 import { Send, Cat, Paperclip, X } from 'lucide-react';
 import { useTheme } from './hooks/useTheme';
 import { useSettings } from './hooks/useSettings';
@@ -58,6 +61,14 @@ function App() {
 
   // ── Модалка «Назад» ──────────────────────────────────────────
   const [showBackModal, setShowBackModal] = useState(false);
+
+  // ── Обработка ошибок и валидация ──────────────────────────────
+  const [showValidationModal, setShowValidationModal] = useState(false);
+  const [missingFields, setMissingFields] = useState([]);
+  
+  const [aiErrorText, setAiErrorText] = useState(null);
+  const [tgErrorText, setTgErrorText] = useState(null);
+  const [lastTgData, setLastTgData] = useState(null); // Для кнопки копирования
 
   // ── Главный экран ──────────────────────────────────────────────
   const [text, setText] = useState('');
@@ -172,14 +183,34 @@ function App() {
   //  СТЕЙТ-МАШИНА: handlers
   // ══════════════════════════════════════════════════════════════
 
-  /** Шаг 1: Отправить → AI loading (mock 2 сек) */
+  /** Шаг 1: Отправить → Валидация → AI loading (mock 2 сек) */
   const handleSubmit = () => {
     if (!text.trim() && !photo) return;
+
+    // Валидация ключей
+    const missing = [];
+    if (!settings.aiKey) missing.push('AI API Key');
+    if (settings.sendToTelegram) {
+      if (!settings.telegramToken) missing.push('Telegram Bot Token');
+      if (!settings.telegramChatId) missing.push('Telegram Chat ID');
+    }
+
+    if (missing.length > 0) {
+      setMissingFields(missing);
+      setShowValidationModal(true);
+      return;
+    }
 
     setPhase('ai_loading');
 
     // Mock: через 2 секунды «ИИ отвечает»
     setTimeout(() => {
+      if (text.toLowerCase().includes('error_ai')) {
+        setAiErrorText('SyntaxError: Unexpected token < in JSON at position 0');
+        setPhase('idle');
+        return;
+      }
+
       const { parsed, raw } = generateMockResponse();
       setAiResult(parsed);
       setRawText(raw);
@@ -207,12 +238,29 @@ function App() {
 
   /** Шаг 3: Подтвердить → TG sending (mock 2 сек) */
   const handleConfirm = (editedData) => {
-    // editedData — отредактированный JSON из PreviewPage
     console.log('Отправляем в TG:', editedData, photo?.file ?? null);
+    
+    if (!settings.sendToTelegram) {
+      if (photo?.url) URL.revokeObjectURL(photo.url);
+      setPhoto(null);
+      setText('');
+      setAiResult(null);
+      setRawText('');
+      setPhase('idle');
+      return;
+    }
+
     setPhase('tg_sending');
 
     // Mock: через 2 секунды «отправлено»
     setTimeout(() => {
+      if (editedData.foods && editedData.foods.some(f => f.name.toLowerCase().includes('error_tg'))) {
+        setTgErrorText('400 Bad Request: chat not found');
+        setLastTgData(JSON.stringify(editedData, null, 2)); // Мокаем сырой текст для копирования
+        setPhase('idle'); 
+        return;
+      }
+
       // Полный сброс
       if (photo?.url) URL.revokeObjectURL(photo.url);
       setPhoto(null);
@@ -442,6 +490,33 @@ function App() {
           <p className={styles.lightboxHint}>Свайпните вниз, чтобы закрыть</p>
         </div>
       )}
+
+      {/* ══ ОШИБКИ И ВАЛИДАЦИЯ ══ */}
+      <ValidationModal
+        open={showValidationModal}
+        missingFields={missingFields}
+        onClose={() => setShowValidationModal(false)}
+        onSettings={() => {
+          setShowValidationModal(false);
+          setView('settings');
+        }}
+      />
+
+      <AiErrorModal
+        open={!!aiErrorText}
+        errorText={aiErrorText || ''}
+        onHome={() => setAiErrorText(null)}
+      />
+
+      <TgErrorModal
+        open={!!tgErrorText}
+        errorText={tgErrorText || ''}
+        onCopy={() => {
+          if (lastTgData) navigator.clipboard.writeText(lastTgData).catch(()=>{});
+          setTgErrorText(null);
+        }}
+        onHome={() => setTgErrorText(null)}
+      />
     </div>
   );
 }

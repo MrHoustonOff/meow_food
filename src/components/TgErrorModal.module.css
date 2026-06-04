@@ -1,0 +1,101 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: var(--space-4);
+}
+
+.card {
+  width: 100%;
+  max-width: 320px;
+  padding: var(--space-5);
+  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  box-shadow: var(--shadow-lg);
+}
+
+.title {
+  font-family: var(--font-round);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  margin: 0;
+  text-align: center;
+}
+
+.text {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: var(--leading-normal);
+  margin: 0;
+}
+
+.buttonStack {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.btnPrimary {
+  width: 100%;
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  background: var(--accent);
+  color: var(--text-on-accent);
+  border: none;
+  font-family: var(--font-round);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+}
+
+.btnDetails {
+  width: 100%;
+  padding: var(--space-2);
+  background: transparent;
+  color: var(--text-tertiary);
+  border: none;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+}
+
+.btnGhost {
+  width: 100%;
+  padding: var(--space-3);
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  font-family: var(--font-round);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+}
+
+.detailsPre {
+  background: var(--separator);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-height: 140px;
+  overflow-y: auto;
+  margin: 0;
+}

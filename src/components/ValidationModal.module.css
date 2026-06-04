@@ -1,0 +1,76 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 200ms ease both;
+  padding: var(--space-4);
+}
+
+.card {
+  max-width: 320px;
+  width: 100%;
+  padding: var(--space-8) var(--space-6);
+  border-radius: var(--radius-2xl);
+  text-align: center;
+  animation: popIn 350ms var(--ease-spring) both;
+}
+
+.title {
+  font-weight: 700;
+  margin: 0;
+}
+
+.list {
+  text-align: left;
+  color: var(--text-secondary);
+  font-size: var(--text-base);
+  margin: var(--space-4) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.listItem {
+  line-height: var(--leading-normal);
+}
+
+.buttons {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.btnCancel,
+.btnSettings {
+  flex: 1;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  font-size: 16px;
+  font-family: var(--font-round);
+  cursor: pointer;
+  border: none;
+}
+
+.btnCancel {
+  background: transparent;
+  color: var(--text-primary);
+  font-weight: 600;
+  border: 1.5px solid var(--separator);
+}
+
+.btnSettings {
+  background: var(--accent);
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+.btnCancel:active,
+.btnSettings:active {
+  transform: scale(0.96);
+}

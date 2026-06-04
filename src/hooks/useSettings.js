@@ -11,6 +11,7 @@ const STORAGE_KEYS = {
   aiKey:          'myau_api_key',
   telegramToken:  'myau_tg_token',
   telegramChatId: 'myau_tg_chat_id',
+  sendToTelegram: 'myau_send_to_tg',
 };
 
 const DEFAULTS = {
@@ -18,14 +19,17 @@ const DEFAULTS = {
   aiKey:          '',
   telegramToken:  '',
   telegramChatId: '',
+  sendToTelegram: true,
 };
 
 function loadSettings() {
+  const stg = localStorage.getItem(STORAGE_KEYS.sendToTelegram);
   return {
     provider:       localStorage.getItem(STORAGE_KEYS.provider)       ?? DEFAULTS.provider,
     aiKey:          localStorage.getItem(STORAGE_KEYS.aiKey)          ?? DEFAULTS.aiKey,
     telegramToken:  localStorage.getItem(STORAGE_KEYS.telegramToken)  ?? DEFAULTS.telegramToken,
     telegramChatId: localStorage.getItem(STORAGE_KEYS.telegramChatId) ?? DEFAULTS.telegramChatId,
+    sendToTelegram: stg === null ? DEFAULTS.sendToTelegram : stg === 'true',
   };
 }
 

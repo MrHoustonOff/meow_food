@@ -95,22 +95,45 @@ const SettingsPage = ({
                   onChange={(val) => updateField('aiKey', val)}
                   placeholder="sk-••••••••••••••••"
                 />
-                <SecretField
-                  id="field-tg-token"
-                  label="Telegram Bot Token"
-                  hint="Токен бота из @BotFather — для уведомлений"
-                  value={settings.telegramToken}
-                  onChange={(val) => updateField('telegramToken', val)}
-                  placeholder="123456789:AABBcc••••"
-                />
-                <SecretField
-                  id="field-tg-chat"
-                  label="Telegram Chat ID"
-                  hint="Идентификатор чата куда бот отправит результат"
-                  value={settings.telegramChatId}
-                  onChange={(val) => updateField('telegramChatId', val)}
-                  placeholder="-100••••••••••"
-                />
+
+                <div className={`${styles.card} glass-mid`} style={{ marginTop: 'var(--space-2)' }}>
+                  <button
+                    type="button"
+                    className={`${styles.systemThemeBtn} ${settings.sendToTelegram ? styles.systemThemeActive : ''} no-select`}
+                    onClick={() => updateField('sendToTelegram', !settings.sendToTelegram)}
+                  >
+                    <span className={styles.systemThemeLabel}>Отправлять в Telegram</span>
+                    <div className={styles.toggleSwitch}>
+                      <div className={styles.toggleKnob} />
+                    </div>
+                  </button>
+                </div>
+
+                <div style={{ 
+                  opacity: settings.sendToTelegram ? 1 : 0.4, 
+                  pointerEvents: settings.sendToTelegram ? 'auto' : 'none',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 'var(--space-4)',
+                  transition: 'opacity 200ms ease'
+                }}>
+                  <SecretField
+                    id="field-tg-token"
+                    label="Telegram Bot Token"
+                    hint="Токен бота из @BotFather — для уведомлений"
+                    value={settings.telegramToken}
+                    onChange={(val) => updateField('telegramToken', val)}
+                    placeholder="123456789:AABBcc••••"
+                  />
+                  <SecretField
+                    id="field-tg-chat"
+                    label="Telegram Chat ID"
+                    hint="Идентификатор чата куда бот отправит результат"
+                    value={settings.telegramChatId}
+                    onChange={(val) => updateField('telegramChatId', val)}
+                    placeholder="-100••••••••••"
+                  />
+                </div>
               </div>
             </section>
 

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, X, Plus, Paperclip, Check } from 'lucide-react';
 import styles from './PreviewPage.module.css';
+import MacrosModal from './MacrosModal';
 
 const MEAL_TYPES = ['Завтрак', 'Обед', 'Ужин', 'Перекус', 'Неизвестно'];
 const DAYS_RU = [
@@ -71,6 +72,7 @@ function PreviewPage({
 }) {
   const [data, setData] = useState(() => structuredClone(aiResult));
   const [mode, setMode] = useState('json'); // 'json' | 'tg' | 'raw'
+  const [editingMacrosIndex, setEditingMacrosIndex] = useState(null);
   const fileInputRef = useRef(null);
 
   // ── Хелперы редактирования ─────────────────────────────────
@@ -82,6 +84,16 @@ function PreviewPage({
       foods[index] = { ...foods[index], [field]: value };
       return { ...prev, foods };
     });
+  };
+
+  const handleMacrosSave = (macros) => {
+    updateFood(editingMacrosIndex, 'macros', macros);
+    setEditingMacrosIndex(null);
+  };
+
+  const handleMacrosClear = () => {
+    updateFood(editingMacrosIndex, 'macros', null);
+    setEditingMacrosIndex(null);
   };
 
   const removeFood = (index) => setData(prev => ({
@@ -241,14 +253,30 @@ function PreviewPage({
                     </button>
                   </div>
                   {/* БЖУ / Макросы */}
-                  {food.macros && (
-                    <div className={styles.macrosRow}>
-                      <span className={styles.macroBadge}>Б: {food.macros.proteins}</span>
-                      <span className={styles.macroBadge}>Ж: {food.macros.fats}</span>
-                      <span className={styles.macroBadge}>У: {food.macros.carbs}</span>
-                      <span className={styles.macroBadge}>{food.macros.calories} ккал (на 100г)</span>
-                    </div>
-                  )}
+                  <div style={{ marginTop: 'var(--space-2)' }}>
+                    {food.macros ? (
+                      <button 
+                        type="button" 
+                        onClick={() => setEditingMacrosIndex(i)}
+                        className={styles.macrosBadgeButton}
+                        aria-label={`Редактировать БЖУ для ${food.name}`}
+                      >
+                        <span className={styles.macroBadge}>Б: {food.macros.proteins}</span>
+                        <span className={styles.macroBadge}>Ж: {food.macros.fats}</span>
+                        <span className={styles.macroBadge}>У: {food.macros.carbs}</span>
+                        <span className={styles.macroBadge}>{food.macros.calories} ккал (на 100г)</span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setEditingMacrosIndex(i)}
+                        className={styles.addMacrosBtn}
+                      >
+                        <Plus size={12} strokeWidth={2.5} style={{ marginRight: 4 }} />
+                        БЖУ (на 100г)
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -382,6 +410,16 @@ function PreviewPage({
             <pre className={styles.rawText}>{rawText}</pre>
           </div>
         </>
+      )}
+
+      {editingMacrosIndex !== null && (
+        <MacrosModal
+          open={true}
+          initialMacros={data.foods[editingMacrosIndex].macros}
+          onSave={handleMacrosSave}
+          onClear={handleMacrosClear}
+          onCancel={() => setEditingMacrosIndex(null)}
+        />
       )}
     </div>
   );
