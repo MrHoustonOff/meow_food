@@ -18,23 +18,29 @@ export function formatTgPreview(data) {
 
   if (data.foods && data.foods.length > 0) {
     msg += `<b>Еда:</b>\n`;
-    data.foods.forEach(f => {
+    data.foods.forEach((f, idx) => {
       msg += `• <b>${escapeHtml(f.name)}</b> — ${escapeHtml(f.amount)}\n`;
       if (f.macros) {
         if (f.macros.per_100g) {
           const p100 = f.macros.per_100g;
-          msg += `  <i>Б: ${p100.b} Ж: ${p100.f} У: ${p100.c} (на 100г)</i>\n`;
-          if (f.macros.total) {
-            const t = f.macros.total;
-            msg += `  <i>Итого (${escapeHtml(f.macros.total_weight)}): Б: ${t.b} Ж: ${t.f} У: ${t.c}</i>\n`;
-            sumB += Number(t.b) || 0;
-            sumF += Number(t.f) || 0;
-            sumC += Number(t.c) || 0;
-            hasTotals = true;
-          }
+          msg += `  БЖУ: <code>Б: ${p100.b} Ж: ${p100.f} У: ${p100.c} (на 100г)</code>\n`;
         } else if (f.macros.proteins !== undefined) {
-          msg += `  <i>Б: ${f.macros.proteins} Ж: ${f.macros.fats} У: ${f.macros.carbs} | ${f.macros.calories} ккал (на 100г)</i>\n`;
+          msg += `  БЖУ: <code>Б: ${f.macros.proteins} Ж: ${f.macros.fats} У: ${f.macros.carbs} | ${f.macros.calories} ккал (на 100г)</code>\n`;
         }
+        
+        if (f.macros.total) {
+          const t = f.macros.total;
+          msg += `  Итого (${escapeHtml(f.macros.total_weight)}): <code>Б: ${t.b} Ж: ${t.f} У: ${t.c}</code>\n`;
+          sumB += Number(t.b) || 0;
+          sumF += Number(t.f) || 0;
+          sumC += Number(t.c) || 0;
+          hasTotals = true;
+        }
+      }
+      
+      // Add a blank line between foods, except after the very last one where we just want a single newline later
+      if (idx < data.foods.length - 1) {
+        msg += `\n`;
       }
     });
     msg += `\n`;
