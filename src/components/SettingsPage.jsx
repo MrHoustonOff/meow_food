@@ -384,7 +384,7 @@ const SettingsPage = ({
               </button>
 
               <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-tertiary)', fontWeight: '600' }}>
-                Мяувник v0.8
+                Мяувник v1.0
               </span>
             </section>
 
