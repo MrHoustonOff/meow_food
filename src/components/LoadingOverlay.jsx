@@ -1,49 +1,56 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './LoadingOverlay.module.css';
 
-/**
- * LoadingOverlay — полноэкранный оверлей с CSS-котиком.
- *
- * @param {'ai'|'telegram'} type — определяет текст и настроение
- */
 const MESSAGES = {
   ai:       'Бегу в волшебный кошачий мир, чтобы всё проверить!',
   telegram: 'Несу посылку в Telegram~ 📨',
 };
 
+const FRAMES_AI = [
+  `   /\\_/\\  \n  ( o.o ) \n   > ^ <  \n  /|   |\\ \n (_|   |_)`,
+  `   /\\_/\\  \n  ( o.o ) \n   >   <  \n  \\|   |/ \n (_|   |_)`,
+  `   /\\_/\\  \n  ( -.- ) \n   > ^ <  \n  /|   |\\ \n (_|   |_)`
+];
+
+const FRAMES_TG = [
+  `   /\\_/\\  \n  ( o.o ) \n  ( [✉] ) \n  /|   |\\ \n (_|   |_)`,
+  `   /\\_/\\  \n  ( -.- ) \n  ( [✉] ) \n  \\|   |/ \n (_|   |_)`,
+  `   /\\_/\\  \n  ( ^.^ ) \n  ( [✉] ) \n  /|   |\\ \n (_|   |_)`
+];
+
 function LoadingOverlay({ type = 'ai' }) {
+  const [frameIdx, setFrameIdx] = useState(0);
+
+  useEffect(() => {
+    const frames = type === 'ai' ? FRAMES_AI : FRAMES_TG;
+    const timer = setInterval(() => {
+      setFrameIdx((prev) => (prev + 1) % frames.length);
+    }, 250); // Скорость анимации ASCII (250мс на кадр)
+
+    return () => clearInterval(timer);
+  }, [type]);
+
+  const currentFrame = (type === 'ai' ? FRAMES_AI : FRAMES_TG)[frameIdx];
+
   return (
     <div className={styles.overlay} aria-busy="true" role="status">
-      {/* ── Сцена: котик + рыбка ── */}
       <div className={styles.scene}>
-        {/* CSS-кот */}
-        <div className={styles.cat}>
-          <div className={styles.catHead} />
-          <div className={styles.catEyes} />
-          <div className={styles.catNose} />
-          <div className={styles.catBody} />
-          <div className={styles.catTail} />
-          <div className={styles.catLegs}>
-            <div className={styles.legFL} />
-            <div className={styles.legFR} />
-            <div className={styles.legBL} />
-            <div className={styles.legBR} />
-          </div>
-        </div>
+        {/* Анимированный ASCII-кот */}
+        <pre className={styles.asciiCat}>
+          {currentFrame}
+        </pre>
 
-        {/* Рыбка */}
-        <span className={styles.fish} aria-hidden="true">🐟</span>
+        {/* Рыбка (только для ИИ) */}
+        {type === 'ai' && <span className={styles.fish} aria-hidden="true">🐟</span>}
 
-        {/* «Земля» — бегущие чёрточки */}
+        {/* «Земля» */}
         <div className={styles.ground}>
           <span /><span /><span />
         </div>
       </div>
 
-      {/* ── Текст ── */}
       <p className={styles.text}>{MESSAGES[type]}</p>
 
-      {/* ── Анимированные точки ── */}
       <div className={styles.dots} aria-hidden="true">
         <span /><span /><span />
       </div>

@@ -30,145 +30,19 @@
   justify-content: center;
 }
 
-/* ─── CSS КОТ ────────────────────────────────────────────────── */
-.cat {
-  position: relative;
-  width: 50px;
-  height: 40px;
-  animation: catRun 500ms ease-in-out infinite;
-}
-
-/* Тело */
-.catBody {
-  position: absolute;
-  bottom: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 36px;
-  height: 22px;
-  background: var(--text-secondary);
-  border-radius: 50% 50% 40% 40%;
-}
-
-/* Голова */
-.catHead {
-  position: absolute;
-  bottom: 26px;
-  left: 2px;
-  width: 20px;
-  height: 18px;
-  background: var(--text-secondary);
-  border-radius: 50% 50% 40% 40%;
-}
-
-/* Ушки — через ::before и ::after головы */
-.catHead::before,
-.catHead::after {
-  content: '';
-  position: absolute;
-  top: -6px;
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-bottom: 8px solid var(--text-secondary);
-}
-.catHead::before { left: 0; }
-.catHead::after  { right: 0; }
-
-/* Глазки */
-.catEyes {
-  position: absolute;
-  bottom: 30px;
-  left: 6px;
-  width: 12px;
-  height: 4px;
-}
-.catEyes::before,
-.catEyes::after {
-  content: '';
-  position: absolute;
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: var(--bg-app);
-  top: 0;
-}
-.catEyes::before { left: 1px; }
-.catEyes::after  { right: 1px; }
-
-/* Носик — акцентный! */
-.catNose {
-  position: absolute;
-  bottom: 28px;
-  left: 10px;
-  width: 0;
-  height: 0;
-  border-left: 2.5px solid transparent;
-  border-right: 2.5px solid transparent;
-  border-top: 3px solid var(--accent);
-}
-
-/* Хвост */
-.catTail {
-  position: absolute;
-  bottom: 24px;
-  right: -2px;
-  width: 16px;
-  height: 16px;
-  border: 3px solid var(--text-secondary);
-  border-color: var(--text-secondary) var(--text-secondary) transparent transparent;
-  border-radius: 0 70% 0 0;
-  transform-origin: bottom left;
-  animation: tailWag 600ms ease-in-out infinite;
-}
-
-/* ─── ЛАПКИ ─────────────────────────────────────────────────── */
-.catLegs {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 32px;
-  height: 14px;
-}
-
-/* Передние лапки */
-.legFL, .legFR {
-  position: absolute;
-  bottom: 0;
-  width: 3px;
-  height: 12px;
-  background: var(--text-secondary);
-  border-radius: 0 0 2px 2px;
-  transform-origin: top center;
-}
-.legFL {
-  left: 4px;
-  animation: legFront 300ms ease-in-out infinite;
-}
-.legFR {
-  left: 10px;
-  animation: legBack 300ms ease-in-out infinite;
-}
-
-/* Задние лапки */
-.legBL, .legBR {
-  position: absolute;
-  bottom: 0;
-  width: 3px;
-  height: 12px;
-  background: var(--text-secondary);
-  border-radius: 0 0 2px 2px;
-  transform-origin: top center;
-}
-.legBL {
-  right: 10px;
-  animation: legBack 300ms ease-in-out infinite;
-}
-.legBR {
-  right: 4px;
-  animation: legFront 300ms ease-in-out infinite;
+/* ─── АНИМИРОВАННЫЙ ASCII КОТ ──────────────────────────────────── */
+.asciiCat {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 16px;
+  line-height: 1.2;
+  color: var(--text-primary);
+  margin: 0;
+  white-space: pre;
+  user-select: none;
+  font-weight: 600;
+  text-align: center;
+  /* Мягкий баунс всей фигурки */
+  animation: catRun 1s ease-in-out infinite;
 }
 
 /* ─── «ЗЕМЛЯ» — бегущие точки ────────────────────────────────── */
