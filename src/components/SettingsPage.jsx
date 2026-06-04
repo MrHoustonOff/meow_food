@@ -86,7 +86,7 @@ const SettingsPage = ({
 
             {/* ════ API КЛЮЧИ ═════════════════════════════════════ */}
             <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>Нейросеть</h2>
+              <h2 className={styles.sectionTitle} style={{ fontSize: '20px', textTransform: 'none', color: 'var(--text-primary)', marginBottom: '4px' }}>Нейросеть</h2>
 
               <div className={styles.fieldsStack}>
                 {settings.provider === 'mock' ? (
@@ -201,9 +201,11 @@ const SettingsPage = ({
               </div>
             </section>
 
+            <div style={{ height: '1px', background: 'var(--separator)', margin: 'var(--space-2) var(--space-4)' }} />
+
             {/* ════ TELEGRAM ══════════════════════════════════════ */}
             <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>Telegram</h2>
+              <h2 className={styles.sectionTitle} style={{ fontSize: '20px', textTransform: 'none', color: 'var(--text-primary)', marginBottom: '4px' }}>Telegram</h2>
 
               <div className={styles.fieldsStack}>
                 <div className={`${styles.card} glass-mid`}>
