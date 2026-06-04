@@ -86,7 +86,7 @@ const SettingsPage = ({
 
             {/* ════ API КЛЮЧИ ═════════════════════════════════════ */}
             <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>Ключи доступа</h2>
+              <h2 className={styles.sectionTitle}>Нейросеть</h2>
 
               <div className={styles.fieldsStack}>
                 {settings.provider === 'mock' ? (
@@ -198,7 +198,15 @@ const SettingsPage = ({
                   </>
                 )}
 
-                <div className={`${styles.card} glass-mid`} style={{ marginTop: 'var(--space-2)' }}>
+              </div>
+            </section>
+
+            {/* ════ TELEGRAM ══════════════════════════════════════ */}
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Telegram</h2>
+
+              <div className={styles.fieldsStack}>
+                <div className={`${styles.card} glass-mid`}>
                   <button
                     type="button"
                     className={`${styles.systemThemeBtn} ${settings.sendToTelegram ? styles.systemThemeActive : ''} no-select`}
