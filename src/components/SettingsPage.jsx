@@ -37,6 +37,7 @@ const SettingsPage = ({
   setSystemTheme,
   accents,
   setAccent,
+  onTestApi,
 }) => {
   return (
     <div className="screen">
@@ -87,14 +88,42 @@ const SettingsPage = ({
               <h2 className={styles.sectionTitle}>Ключи доступа</h2>
 
               <div className={styles.fieldsStack}>
-                <SecretField
-                  id="field-ai-key"
-                  label="AI API Key"
-                  hint="Ключ для выбранного провайдера (Groq, Ollama и др.)"
-                  value={settings.aiKey}
-                  onChange={(val) => updateField('aiKey', val)}
-                  placeholder="sk-••••••••••••••••"
-                />
+                {settings.provider === 'groq' ? (
+                  <>
+                    <SecretField
+                      id="field-ai-key"
+                      label="Groq API Key"
+                      hint="Ключ для облачной модели Llama 3"
+                      value={settings.aiKey}
+                      onChange={(val) => updateField('aiKey', val)}
+                      placeholder="gsk_••••••••••••••••"
+                    />
+                    <div style={{ marginTop: 'var(--space-2)', padding: 'var(--space-2)', background: 'var(--accent-muted)', borderRadius: 'var(--radius-md)' }}>
+                      <p style={{ margin: 0, fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>
+                        Обычно используется мощная модель 70b. Если она перегружена, котик сам переключится на быструю 8b модель на 2 часа.
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <SecretField
+                      id="field-ollama-url"
+                      label="Ollama URL"
+                      hint="Локальный адрес сервера Ollama"
+                      value={settings.ollamaUrl}
+                      onChange={(val) => updateField('ollamaUrl', val)}
+                      placeholder="http://localhost:11434"
+                    />
+                    <SecretField
+                      id="field-ollama-model"
+                      label="Модель Ollama"
+                      hint="Название скачанной модели"
+                      value={settings.ollamaModel}
+                      onChange={(val) => updateField('ollamaModel', val)}
+                      placeholder="llama3.1:8b"
+                    />
+                  </>
+                )}
 
                 <div className={`${styles.card} glass-mid`} style={{ marginTop: 'var(--space-2)' }}>
                   <button
@@ -196,6 +225,20 @@ const SettingsPage = ({
                   />
                 </div>
               ))}
+            </section>
+
+            {/* ════ ТЕСТОВЫЙ ЗАПРОС ════════════════════════════════════ */}
+            <section className={styles.section} style={{ marginTop: 'var(--space-6)' }}>
+              <button
+                type="button"
+                className={`${styles.systemThemeBtn} pressable no-select`}
+                style={{ justifyContent: 'center', color: 'var(--accent)', fontWeight: 'bold' }}
+                onClick={() => {
+                  if (onTestApi) onTestApi();
+                }}
+              >
+                Отправить тестовый запрос
+              </button>
             </section>
 
             <div className="bottom-nav-spacer" />

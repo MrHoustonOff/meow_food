@@ -12,7 +12,9 @@ import TgSuccessModal from './components/TgSuccessModal';
 import { Send, Cat, Paperclip, X } from 'lucide-react';
 import { useTheme } from './hooks/useTheme';
 import { useSettings } from './hooks/useSettings';
-import { generateMockResponse } from './utils/mockData';
+import { complete as llmComplete } from './services/llm/index.js';
+import { buildPrompt, extractAndValidateJSON } from './utils/prompt.js';
+import { send as sendToTg } from './services/telegram.js';
 import { formatTgPreview } from './utils/formatters';
 import styles from './App.module.css';
 
@@ -206,12 +208,11 @@ function App() {
   // ══════════════════════════════════════════════════════════════
 
   /** Шаг 1: Отправить → Валидация → AI loading (mock 2 сек) */
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!text.trim() && !photo) return;
 
-    // Валидация ключей
     const missing = [];
-    if (!settings.aiKey) missing.push('AI API Key');
+    if (settings.provider === 'groq' && !settings.aiKey) missing.push('Groq API Key');
     if (settings.sendToTelegram) {
       if (!settings.telegramToken) missing.push('Telegram Bot Token');
       if (!settings.telegramChatId) missing.push('Telegram Chat ID');
@@ -225,19 +226,39 @@ function App() {
 
     setPhase('ai_loading');
 
-    // Mock: через 2 секунды «ИИ отвечает»
-    setTimeout(() => {
-      if (text.toLowerCase().includes('error_ai')) {
-        setAiErrorText('SyntaxError: Unexpected token < in JSON at position 0');
-        setPhase('idle');
-        return;
-      }
+    const timestamp = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    const messages = buildPrompt(text, timestamp);
 
-      const { parsed, raw } = generateMockResponse();
+    let parsed = null;
+    let raw = '';
+    let success = false;
+
+    // 3 Попытки
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        raw = await llmComplete(messages, settings);
+        parsed = extractAndValidateJSON(raw);
+        success = true;
+        break; // успех
+      } catch (e) {
+        console.error('LLM attempt failed:', e);
+        if (e.status === 429) {
+          setAiErrorText('Модель перегружена (429 Rate Limit). Попробуй позже.');
+          break; // Не ретраим 429 для той же модели
+        }
+        if (attempt === 3) {
+          setAiErrorText(e.message || 'Ошибка парсинга JSON');
+        }
+      }
+    }
+
+    if (success) {
       setAiResult(parsed);
       setRawText(raw);
       setPhase('preview');
-    }, MOCK_DELAY);
+    } else {
+      setPhase('idle');
+    }
   };
 
   /** Шаг 2 (preview): Нажали «Назад» → показать модалку */
@@ -259,11 +280,12 @@ function App() {
   };
 
   /** Шаг 3: Подтвердить → TG sending (mock 2 сек) */
-  const handleConfirm = (editedData) => {
+  const handleConfirm = async (editedData) => {
     console.log('Отправляем в TG:', editedData, photo?.file ?? null);
+    const formattedText = formatTgPreview(editedData);
     
     if (!settings.sendToTelegram) {
-      setLastTgData(formatTgPreview(editedData));
+      setLastTgData(formattedText);
       setShowCopyModal(true);
 
       if (photo?.url) URL.revokeObjectURL(photo.url);
@@ -277,15 +299,9 @@ function App() {
 
     setPhase('tg_sending');
 
-    // Mock: через 2 секунды «отправлено»
-    setTimeout(() => {
-      if (editedData.foods && editedData.foods.some(f => f.name.toLowerCase().includes('error_tg'))) {
-        setTgErrorText('400 Bad Request: chat not found');
-        setLastTgData(JSON.stringify(editedData, null, 2)); // Мокаем сырой текст для копирования
-        setPhase('idle'); 
-        return;
-      }
-
+    try {
+      await sendToTg(formattedText, photo?.file, settings.telegramToken, settings.telegramChatId);
+      
       // Полный сброс
       if (photo?.url) URL.revokeObjectURL(photo.url);
       setPhoto(null);
@@ -303,7 +319,21 @@ function App() {
         ta.classList.remove(styles.textareaScrollable);
         baseHeightRef.current = null;
       }
-    }, MOCK_DELAY);
+    } catch (e) {
+      setTgErrorText(e.message || 'Ошибка отправки в Telegram');
+      setLastTgData(formattedText); // Мокаем сырой текст для копирования
+      setPhase('idle'); 
+    }
+  };
+
+  const handleTestApi = async () => {
+    try {
+      const messages = [{ role: 'user', content: 'Привет, ответь "мяу", это проверка.' }];
+      await llmComplete(messages, settings);
+      alert('Всё работает отлично! 🐾');
+    } catch (e) {
+      alert(`Ошибка API: ${e.message}`);
+    }
   };
 
   // ══════════════════════════════════════════════════════════════
@@ -323,6 +353,7 @@ function App() {
         setSystemTheme={setSystemTheme}
         accents={accents}
         setAccent={setAccent}
+        onTestApi={handleTestApi}
       />
     );
   }
