@@ -15,7 +15,16 @@ export async function complete(messages, url = 'http://localhost:11434', model =
   });
 
   if (!response.ok) {
-    const err = new Error(`Ollama API Error: ${response.statusText}`);
+    let errorDetail = response.statusText;
+    try {
+      const errorBody = await response.json();
+      if (errorBody.error) {
+        errorDetail = errorBody.error;
+      }
+    } catch (e) {
+      // Ignore if not JSON
+    }
+    const err = new Error(`Ollama API Error: ${errorDetail}`);
     err.status = response.status;
     throw err;
   }
