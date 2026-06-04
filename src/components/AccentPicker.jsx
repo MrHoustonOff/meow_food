@@ -20,7 +20,7 @@ const PRESETS = [
   { hex: '#34C759', name: 'Green'  },
   { hex: '#007AFF', name: 'Blue'   },
   { hex: '#AF52DE', name: 'Purple' },
-  { hex: '#FF2D55', name: 'Red'    },
+  { hex: '#FFA6C9', name: 'Soft Pink' },
   { hex: '#5AC8FA', name: 'Teal'   },
   { hex: '#FFD60A', name: 'Yellow' },
 ];
