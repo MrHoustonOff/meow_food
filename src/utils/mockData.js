@@ -24,7 +24,11 @@ export function generateMockResponse() {
     day: DAYS_RU[now.getDay()],
     meal_type: getMealType(now.getHours()),
     foods: [
-      { name: 'борщ', amount: 'тарелка', macros: null },
+      { 
+        name: 'борщ', 
+        amount: 'тарелка', 
+        macros: { proteins: 5, fats: 8, carbs: 12, calories: 150 } 
+      },
       { name: 'хлеб чёрный', amount: '2 куска', macros: null },
       { name: 'сметана', amount: '1 ложка', macros: null },
     ],

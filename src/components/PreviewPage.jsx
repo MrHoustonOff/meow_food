@@ -1,26 +1,63 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, X, Plus, Paperclip, Check } from 'lucide-react';
 import styles from './PreviewPage.module.css';
 
-/**
- * MEAL_TYPES — полный список типов приёма пищи.
- * Если нужно расширить — просто добавь строку сюда.
- */
 const MEAL_TYPES = ['Завтрак', 'Обед', 'Ужин', 'Перекус', 'Неизвестно'];
+const DAYS_RU = [
+  'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'
+];
+
+/**
+ * AutoResizeTextarea — компонент для авторасширяющегося поля ввода.
+ */
+function AutoResizeTextarea({ value, onChange, placeholder, className, ...props }) {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.style.height = '24px';
+      ref.current.style.height = `${ref.current.scrollHeight}px`;
+    }
+  }, [value]);
+
+  return (
+    <textarea
+      ref={ref}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      className={className}
+      rows={1}
+      {...props}
+    />
+  );
+}
+
+/**
+ * Хелпер для форматирования TG-превью
+ */
+function formatTgPreview(data) {
+  let msg = `🕐 ${data.time}, ${data.day}\n🍽️ ${data.meal_type}\n\n`;
+  if (data.foods && data.foods.length > 0) {
+    data.foods.forEach(f => {
+      msg += `• ${f.name} — ${f.amount}\n`;
+      if (f.macros) {
+        msg += `  Б: ${f.macros.proteins} Ж: ${f.macros.fats} У: ${f.macros.carbs} | ${f.macros.calories} ккал\n`;
+      }
+    });
+    msg += '\n';
+  }
+  if (data.facts && data.facts.length > 0) {
+    msg += `📝 Факты:\n`;
+    data.facts.forEach(f => {
+      msg += `— ${f}\n`;
+    });
+  }
+  return msg.trim();
+}
 
 /**
  * PreviewPage — страница подтверждения ответа ИИ.
- *
- * Два режима: JSON (редактируемый) и Raw (read-only).
- * Props:
- *   aiResult   — parsed JSON (будет скопирован для редактирования)
- *   rawText    — raw строка ответа ИИ
- *   photo      — { file, url } | null
- *   onPhotoRemove — () => void
- *   onPhotoSelect — (e) => void  (onChange от file input)
- *   onConfirm  — (editedResult) => void
- *   onBack     — () => void
- *   isBlurred  — boolean (blur при tg_sending)
  */
 function PreviewPage({
   aiResult,
@@ -32,16 +69,12 @@ function PreviewPage({
   onBack,
   isBlurred = false,
 }) {
-  // Локальная редактируемая копия
   const [data, setData] = useState(() => structuredClone(aiResult));
-  const [mode, setMode] = useState('json'); // 'json' | 'raw'
+  const [mode, setMode] = useState('json'); // 'json' | 'tg' | 'raw'
   const fileInputRef = useRef(null);
 
   // ── Хелперы редактирования ─────────────────────────────────
-
-  const updateMeta = (key, value) => {
-    setData(prev => ({ ...prev, [key]: value }));
-  };
+  const updateMeta = (key, value) => setData(prev => ({ ...prev, [key]: value }));
 
   const updateFood = (index, field, value) => {
     setData(prev => {
@@ -51,19 +84,15 @@ function PreviewPage({
     });
   };
 
-  const removeFood = (index) => {
-    setData(prev => ({
-      ...prev,
-      foods: prev.foods.filter((_, i) => i !== index),
-    }));
-  };
+  const removeFood = (index) => setData(prev => ({
+    ...prev,
+    foods: prev.foods.filter((_, i) => i !== index),
+  }));
 
-  const addFood = () => {
-    setData(prev => ({
-      ...prev,
-      foods: [...prev.foods, { name: '', amount: '', macros: null }],
-    }));
-  };
+  const addFood = () => setData(prev => ({
+    ...prev,
+    foods: [...prev.foods, { name: '', amount: '', macros: null }],
+  }));
 
   const updateFact = (index, value) => {
     setData(prev => {
@@ -73,22 +102,17 @@ function PreviewPage({
     });
   };
 
-  const removeFact = (index) => {
-    setData(prev => ({
-      ...prev,
-      facts: prev.facts.filter((_, i) => i !== index),
-    }));
-  };
+  const removeFact = (index) => setData(prev => ({
+    ...prev,
+    facts: prev.facts.filter((_, i) => i !== index),
+  }));
 
-  const addFact = () => {
-    setData(prev => ({
-      ...prev,
-      facts: [...prev.facts, ''],
-    }));
-  };
+  const addFact = () => setData(prev => ({
+    ...prev,
+    facts: [...prev.facts, ''],
+  }));
 
   // ── Рендер ─────────────────────────────────────────────────
-
   return (
     <div className={`${styles.page} ${isBlurred ? styles.blurred : ''}`}>
       {/* ── Верхняя панель ── */}
@@ -104,7 +128,7 @@ function PreviewPage({
           <span>Назад</span>
         </button>
 
-        {/* Табы JSON / Raw */}
+        {/* Табы JSON / TG / Raw */}
         <div className={styles.tabs}>
           <button
             type="button"
@@ -112,6 +136,13 @@ function PreviewPage({
             onClick={() => setMode('json')}
           >
             JSON
+          </button>
+          <button
+            type="button"
+            className={`${styles.tab} ${mode === 'tg' ? styles.tabActive : ''}`}
+            onClick={() => setMode('tg')}
+          >
+            TG
           </button>
           <button
             type="button"
@@ -123,9 +154,8 @@ function PreviewPage({
         </div>
       </div>
 
-      {mode === 'json' ? (
+      {mode === 'json' && (
         <>
-          {/* ── Заголовок ── */}
           <p className={styles.heading}>
             Поговорил со своими котанами.{'\n'}Проверь, мяу~&nbsp;🐾
           </p>
@@ -146,15 +176,15 @@ function PreviewPage({
                 />
               </div>
               <div className={styles.field}>
-                <input
+                <select
                   id="preview-day"
-                  className={styles.fieldInput}
-                  type="text"
+                  className={styles.fieldSelect}
                   value={data.day}
                   onChange={(e) => updateMeta('day', e.target.value)}
-                  placeholder="День недели"
                   aria-label="День недели"
-                />
+                >
+                  {DAYS_RU.map(d => <option key={d} value={d}>{d}</option>)}
+                </select>
               </div>
             </div>
           </div>
@@ -185,31 +215,40 @@ function PreviewPage({
                   className={`${styles.item} glass-mid`}
                   style={{ animationDelay: `${i * 50}ms` }}
                 >
-                  <input
-                    className={styles.itemInput}
-                    type="text"
-                    value={food.name}
-                    onChange={(e) => updateFood(i, 'name', e.target.value)}
-                    placeholder="Название"
-                    aria-label={`Еда ${i + 1} — название`}
-                  />
-                  <span className={styles.itemSep}>—</span>
-                  <input
-                    className={styles.itemInput}
-                    type="text"
-                    value={food.amount || ''}
-                    onChange={(e) => updateFood(i, 'amount', e.target.value || null)}
-                    placeholder="кол-во"
-                    aria-label={`Еда ${i + 1} — количество`}
-                  />
-                  <button
-                    type="button"
-                    className={styles.itemRemove}
-                    onClick={() => removeFood(i)}
-                    aria-label={`Удалить ${food.name || 'еду'}`}
-                  >
-                    <X size={14} strokeWidth={2.5} />
-                  </button>
+                  <div className={styles.itemRow}>
+                    <AutoResizeTextarea
+                      className={styles.autoResizeTextarea}
+                      value={food.name}
+                      onChange={(e) => updateFood(i, 'name', e.target.value)}
+                      placeholder="Название"
+                      aria-label={`Еда ${i + 1} — название`}
+                    />
+                    <span className={styles.itemSep}>—</span>
+                    <AutoResizeTextarea
+                      className={styles.autoResizeTextarea}
+                      value={food.amount || ''}
+                      onChange={(e) => updateFood(i, 'amount', e.target.value || null)}
+                      placeholder="кол-во"
+                      aria-label={`Еда ${i + 1} — количество`}
+                    />
+                    <button
+                      type="button"
+                      className={styles.itemRemove}
+                      onClick={() => removeFood(i)}
+                      aria-label={`Удалить ${food.name || 'еду'}`}
+                    >
+                      <X size={14} strokeWidth={2.5} />
+                    </button>
+                  </div>
+                  {/* БЖУ / Макросы */}
+                  {food.macros && (
+                    <div className={styles.macrosRow}>
+                      <span className={styles.macroBadge}>Б: {food.macros.proteins}</span>
+                      <span className={styles.macroBadge}>Ж: {food.macros.fats}</span>
+                      <span className={styles.macroBadge}>У: {food.macros.carbs}</span>
+                      <span className={styles.macroBadge}>{food.macros.calories} ккал</span>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -233,22 +272,23 @@ function PreviewPage({
                   className={`${styles.item} glass-mid`}
                   style={{ animationDelay: `${i * 50}ms` }}
                 >
-                  <input
-                    className={styles.itemInput}
-                    type="text"
-                    value={fact}
-                    onChange={(e) => updateFact(i, e.target.value)}
-                    placeholder="Что запомнить?"
-                    aria-label={`Факт ${i + 1}`}
-                  />
-                  <button
-                    type="button"
-                    className={styles.itemRemove}
-                    onClick={() => removeFact(i)}
-                    aria-label="Удалить факт"
-                  >
-                    <X size={14} strokeWidth={2.5} />
-                  </button>
+                  <div className={styles.itemRow}>
+                    <AutoResizeTextarea
+                      className={styles.autoResizeTextarea}
+                      value={fact}
+                      onChange={(e) => updateFact(i, e.target.value)}
+                      placeholder="Что запомнить?"
+                      aria-label={`Факт ${i + 1}`}
+                    />
+                    <button
+                      type="button"
+                      className={styles.itemRemove}
+                      onClick={() => removeFact(i)}
+                      aria-label="Удалить факт"
+                    >
+                      <X size={14} strokeWidth={2.5} />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -266,7 +306,6 @@ function PreviewPage({
           <div className={styles.photoSection}>
             <div className={styles.sectionLabel}>📎 Фото</div>
 
-            {/* Скрытый file input */}
             <input
               ref={fileInputRef}
               type="file"
@@ -311,7 +350,6 @@ function PreviewPage({
             )}
           </div>
 
-          {/* ── Кнопка подтверждения ── */}
           <button
             id="btn-confirm"
             type="button"
@@ -322,8 +360,20 @@ function PreviewPage({
             <span>Да, киска~ Всё правильно&nbsp;🐾</span>
           </button>
         </>
-      ) : (
-        /* ── RAW MODE ── */
+      )}
+
+      {mode === 'tg' && (
+        <>
+          <p className={styles.heading}>
+            Превью для Telegram
+          </p>
+          <div className={styles.tgPreview}>
+            <pre className={styles.tgText}>{formatTgPreview(data)}</pre>
+          </div>
+        </>
+      )}
+
+      {mode === 'raw' && (
         <>
           <p className={styles.heading}>
             Raw ответ ИИ — только для чтения
