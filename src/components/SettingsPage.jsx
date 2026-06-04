@@ -253,20 +253,28 @@ const SettingsPage = ({
                 className="pressable no-select"
                 style={{
                   width: '100%',
-                  padding: 'var(--space-4)',
-                  borderRadius: 'var(--radius-round)',
-                  border: 'none',
-                  background: 'var(--accent)',
-                  color: '#FFF',
-                  fontSize: 'var(--text-base)',
+                  height: '54px',
+                  borderRadius: 'var(--radius-xl)',
+                  background: 'var(--glass-bg)',
+                  WebkitBackdropFilter: 'var(--glass-blur)',
+                  backdropFilter: 'var(--glass-blur)',
+                  border: '1.5px solid var(--accent)',
+                  boxShadow: 'var(--shadow-accent)',
+                  fontFamily: 'var(--font-round)',
+                  fontSize: '16px',
                   fontWeight: '700',
-                  boxShadow: '0 4px 12px rgba(255, 55, 95, 0.25)' // мягкая тень от акцента
+                  letterSpacing: '-0.01em',
+                  color: 'var(--accent)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 'var(--space-2)'
                 }}
                 onClick={() => {
                   if (onTestApi) onTestApi();
                 }}
               >
-                Отправить тестовый запрос
+                Отправить тестовый запрос 🐾
               </button>
 
               <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-tertiary)', fontWeight: '600' }}>
