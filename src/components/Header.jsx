@@ -27,27 +27,25 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 'calc(12px + env(safe-area-inset-top)) 20px 12px 20px',
+    // Убираем env(safe-area-inset-top). Делаем фиксированный отступ под "контракт"
+    padding: '44px 20px 12px 20px',
     position: 'sticky',
     top: 0,
     backgroundColor: 'transparent',
     zIndex: 100,
-    pointerEvents: 'none', // Чтобы заголовок не мешал кликам по контенту под ним (кнопки переопределят это)
+    pointerEvents: 'none',
   },
   iconButton: {
     width: '46px',
     height: '46px',
     borderRadius: '23px',
-    // Жидкое стекло: полупрозрачный фон
     backgroundColor: 'var(--glass-bg)',
-    // Размытие заднего плана
     backdropFilter: 'blur(16px) saturate(180%)',
     WebkitBackdropFilter: 'blur(16px) saturate(180%)',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     transition: 'all 300ms var(--transition-base)',
-    // Тонкая "стеклянная" граница
     border: '1px solid var(--glass-border)',
     boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
     pointerEvents: 'auto',
