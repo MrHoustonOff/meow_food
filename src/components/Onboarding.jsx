@@ -112,7 +112,7 @@ const Onboarding = ({ onComplete }) => {
 
       {/* SLIDE 3: Keys input */}
       {slide === 3 && (
-        <div className={styles.slide} style={{ justifyContent: 'flex-start', paddingTop: 'var(--space-6)' }}>
+        <div className={styles.slide}>
           <div className={`${styles.asciiCat}`}>
             {` /\\_/\\   ✍️\n( 0_0 ) /\n > ^ < `}
           </div>
