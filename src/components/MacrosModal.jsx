@@ -10,10 +10,13 @@ export default function MacrosModal({ open, initialMacros, onSave, onClear, onCa
   // Синхронизация состояния при открытии
   useEffect(() => {
     if (open) {
-      setProteins(initialMacros?.proteins?.toString() || '');
-      setFats(initialMacros?.fats?.toString() || '');
-      setCarbs(initialMacros?.carbs?.toString() || '');
-      setCalories(initialMacros?.calories?.toString() || '');
+      const m = initialMacros || {};
+      const p100 = m.per_100g || {};
+      
+      setProteins((p100.b ?? m.proteins ?? '').toString());
+      setFats((p100.f ?? m.fats ?? '').toString());
+      setCarbs((p100.c ?? m.carbs ?? '').toString());
+      setCalories((m.calories ?? '').toString());
     }
   }, [open, initialMacros]);
 

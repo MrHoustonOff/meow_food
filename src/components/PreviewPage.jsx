@@ -241,10 +241,31 @@ function PreviewPage({
                         className={styles.macrosBadgeButton}
                         aria-label={`Редактировать БЖУ для ${food.name}`}
                       >
-                        <span className={styles.macroBadge}>Б: {food.macros.proteins}</span>
-                        <span className={styles.macroBadge}>Ж: {food.macros.fats}</span>
-                        <span className={styles.macroBadge}>У: {food.macros.carbs}</span>
-                        <span className={styles.macroBadge}>{food.macros.calories} ккал (на 100г)</span>
+                        {food.macros.per_100g ? (
+                          <>
+                            <span className={styles.macroBadge}>Б: {food.macros.per_100g.b}</span>
+                            <span className={styles.macroBadge}>Ж: {food.macros.per_100g.f}</span>
+                            <span className={styles.macroBadge}>У: {food.macros.per_100g.c}</span>
+                            <span className={styles.macroBadge}>(на 100г)</span>
+                            {food.macros.total && (
+                              <span className={styles.macroBadge} style={{ background: 'var(--accent)', color: 'white' }}>
+                                Итого: Б:{food.macros.total.b} Ж:{food.macros.total.f} У:{food.macros.total.c}
+                              </span>
+                            )}
+                            {food.macros.note && (
+                              <span className={styles.macroBadge} style={{ color: 'var(--text-tertiary)' }}>
+                                {food.macros.note}
+                              </span>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            <span className={styles.macroBadge}>Б: {food.macros.proteins}</span>
+                            <span className={styles.macroBadge}>Ж: {food.macros.fats}</span>
+                            <span className={styles.macroBadge}>У: {food.macros.carbs}</span>
+                            <span className={styles.macroBadge}>{food.macros.calories} ккал (на 100г)</span>
+                          </>
+                        )}
                       </button>
                     ) : (
                       <button
