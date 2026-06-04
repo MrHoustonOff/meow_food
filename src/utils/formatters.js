@@ -20,7 +20,7 @@ export function formatTgPreview(data) {
   let totalText = '';
 
   if (data.foods && data.foods.length > 0) {
-    msg += `<code>Еда:\n`;
+    msg += `<pre>Еда:\n`;
     data.foods.forEach(f => {
       msg += `• ${escapeHtml(f.name)} — ${escapeHtml(f.amount)}\n`;
       if (f.macros) {
@@ -40,7 +40,7 @@ export function formatTgPreview(data) {
         }
       }
     });
-    msg += `</code>\n\n`;
+    msg += `</pre>\n\n`;
   }
 
   if (hasTotals || totalText) {
@@ -56,7 +56,7 @@ export function formatTgPreview(data) {
   }
 
   if (data.facts && data.facts.length > 0) {
-    msg += `<u><b><code>📝 Факты:</code></b></u>\n`;
+    msg += `<u><b>📝 Факты:</b></u>\n`;
     data.facts.forEach(f => {
       msg += `— ${escapeHtml(f)}\n`;
     });
