@@ -4,7 +4,35 @@ import { complete as ollamaComplete } from './ollama.js';
 export async function complete(messages, settings) {
   const { provider, aiKey, ollamaUrl, ollamaModel } = settings;
 
-  if (provider === 'ollama') {
+  if (provider === 'mock') {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve(`{
+  "time": "15:00",
+  "day": "Неизвестно",
+  "meal_type": "Перекус",
+  "foods": [
+    {
+      "name": "кофе с молоком",
+      "amount": "500 мл",
+      "macros": null
+    },
+    {
+      "name": "творог мягкий",
+      "amount": "125г",
+      "macros": {
+        "per_100g": {"b": 8.5, "f": 5, "c": 1.6},
+        "total_weight": "125г",
+        "total": {"b": 10.625, "f": 6.25, "c": 2}
+      }
+    }
+  ],
+  "facts": ["Это тестовый MOCK ответ"],
+  "has_food": true
+}`);
+      }, 1500);
+    });
+  } else if (provider === 'ollama') {
     return await ollamaComplete(messages, ollamaUrl, ollamaModel);
   } else if (provider === 'groq') {
     const fallbackUntil = localStorage.getItem('myau_groq_fallback_until');

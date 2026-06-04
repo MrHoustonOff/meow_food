@@ -25,6 +25,7 @@ import styles from './SettingsPage.module.css';
 const PROVIDERS = [
   { id: 'groq',   label: 'Groq',   badge: 'Cloud' },
   { id: 'ollama', label: 'Ollama', badge: 'Local' },
+  { id: 'mock',   label: 'Mock',   badge: 'Dev' },
 ];
 
 const SettingsPage = ({
@@ -88,7 +89,13 @@ const SettingsPage = ({
               <h2 className={styles.sectionTitle}>Ключи доступа</h2>
 
               <div className={styles.fieldsStack}>
-                {settings.provider === 'groq' ? (
+                {settings.provider === 'mock' ? (
+                  <div style={{ padding: 'var(--space-3)', background: 'var(--glass-bg)', borderRadius: 'var(--radius-lg)' }}>
+                    <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--text-sm)', textAlign: 'center' }}>
+                      Включен режим мокирования. Запросы к ИИ не отправляются, токены не тратятся. Котик просто притворится, что всё понял! 🐾
+                    </p>
+                  </div>
+                ) : settings.provider === 'groq' ? (
                   <>
                     <SecretField
                       id="field-ai-key"
