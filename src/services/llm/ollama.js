@@ -1,6 +1,11 @@
 export async function complete(messages, url = 'http://localhost:11434', model = 'llama3.1:8b') {
-  // Ensure url points to the correct endpoint
-  const endpoint = url.endsWith('/api/chat') ? url : `${url.replace(/\/$/, '')}/api/chat`;
+  // Ensure url points to the OpenAI compatible endpoint
+  let endpoint = url.trim().replace(/\/$/, '');
+  if (endpoint.endsWith('/api/chat')) {
+    endpoint = endpoint.replace('/api/chat', '/v1/chat/completions');
+  } else if (!endpoint.endsWith('/v1/chat/completions')) {
+    endpoint = `${endpoint}/v1/chat/completions`;
+  }
   
   const response = await fetch(endpoint, {
     method: 'POST',
@@ -18,7 +23,9 @@ export async function complete(messages, url = 'http://localhost:11434', model =
     let errorDetail = response.statusText;
     try {
       const errorBody = await response.json();
-      if (errorBody.error) {
+      if (errorBody.error && errorBody.error.message) {
+        errorDetail = errorBody.error.message;
+      } else if (errorBody.error) {
         errorDetail = errorBody.error;
       }
     } catch (e) {
@@ -30,5 +37,5 @@ export async function complete(messages, url = 'http://localhost:11434', model =
   }
 
   const data = await response.json();
-  return data.message.content;
+  return data.choices[0].message.content;
 }
