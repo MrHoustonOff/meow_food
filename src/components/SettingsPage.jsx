@@ -122,6 +122,25 @@ const SettingsPage = ({
                       onChange={(val) => updateField('ollamaModel', val)}
                       placeholder="llama3.1:8b"
                     />
+                    <button
+                      type="button"
+                      className="pressable no-select"
+                      style={{
+                        marginTop: 'var(--space-2)',
+                        padding: 'var(--space-2)',
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'var(--text-tertiary)',
+                        fontSize: 'var(--text-sm)',
+                        textAlign: 'left'
+                      }}
+                      onClick={() => {
+                        updateField('ollamaUrl', 'http://localhost:11434');
+                        updateField('ollamaModel', 'llama3.1:8b');
+                      }}
+                    >
+                      Сбросить по умолчанию
+                    </button>
                   </>
                 )}
 
