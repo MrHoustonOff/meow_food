@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, X, Plus, Paperclip, Check } from 'lucide-react';
 import styles from './PreviewPage.module.css';
 import MacrosModal from './MacrosModal';
+import TotalMacrosModal from './TotalMacrosModal';
 import { formatTgPreview } from '../utils/formatters';
 
 const MEAL_TYPES = ['Завтрак', 'Обед', 'Ужин', 'Перекус', 'Неизвестно'];
@@ -53,6 +54,7 @@ function PreviewPage({
   const [data, setData] = useState(() => structuredClone(aiResult));
   const [mode, setMode] = useState('json'); // 'json' | 'tg' | 'raw'
   const [editingMacrosIndex, setEditingMacrosIndex] = useState(null);
+  const [editingTotalMacrosIndex, setEditingTotalMacrosIndex] = useState(null);
   const fileInputRef = useRef(null);
 
   // ── Хелперы редактирования ─────────────────────────────────
@@ -103,6 +105,35 @@ function PreviewPage({
     ...prev,
     facts: [...prev.facts, ''],
   }));
+
+  const handleSaveTotalMacros = (totalData) => {
+    setData(prev => {
+      const foods = [...prev.foods];
+      const target = { ...foods[editingTotalMacrosIndex] };
+      
+      if (!target.macros) target.macros = {};
+      target.macros.total_weight = totalData.total_weight;
+      target.macros.total = totalData.total;
+      
+      foods[editingTotalMacrosIndex] = target;
+      return { ...prev, foods };
+    });
+    setEditingTotalMacrosIndex(null);
+  };
+
+  const handleClearTotalMacros = () => {
+    setData(prev => {
+      const foods = [...prev.foods];
+      const target = { ...foods[editingTotalMacrosIndex] };
+      if (target.macros) {
+        delete target.macros.total;
+        delete target.macros.total_weight;
+      }
+      foods[editingTotalMacrosIndex] = target;
+      return { ...prev, foods };
+    });
+    setEditingTotalMacrosIndex(null);
+  };
 
   // ── Рендер ─────────────────────────────────────────────────
   return (
@@ -248,7 +279,14 @@ function PreviewPage({
                             <span className={styles.macroBadge}>У: {food.macros.per_100g.c}</span>
                             <span className={styles.macroBadge}>(на 100г)</span>
                             {food.macros.total && (
-                              <span className={styles.macroBadge} style={{ background: 'var(--accent)', color: 'white' }}>
+                              <span
+                                className={`${styles.macroBadge} pressable`}
+                                style={{ background: 'var(--accent)', color: 'white' }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setEditingTotalMacrosIndex(i);
+                                }}
+                              >
                                 Итого: Б:{food.macros.total.b} Ж:{food.macros.total.f} У:{food.macros.total.c}
                               </span>
                             )}
@@ -420,6 +458,16 @@ function PreviewPage({
           onSave={handleMacrosSave}
           onClear={handleMacrosClear}
           onCancel={() => setEditingMacrosIndex(null)}
+        />
+      )}
+
+      {editingTotalMacrosIndex !== null && (
+        <TotalMacrosModal
+          open={true}
+          initialTotal={data.foods[editingTotalMacrosIndex].macros}
+          onSave={handleSaveTotalMacros}
+          onClear={handleClearTotalMacros}
+          onCancel={() => setEditingTotalMacrosIndex(null)}
         />
       )}
     </div>
