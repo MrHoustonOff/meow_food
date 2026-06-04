@@ -7,10 +7,12 @@ import ConfirmBackModal from './components/ConfirmBackModal';
 import ValidationModal from './components/ValidationModal';
 import AiErrorModal from './components/AiErrorModal';
 import TgErrorModal from './components/TgErrorModal';
+import SuccessCopyModal from './components/SuccessCopyModal';
 import { Send, Cat, Paperclip, X } from 'lucide-react';
 import { useTheme } from './hooks/useTheme';
 import { useSettings } from './hooks/useSettings';
 import { generateMockResponse } from './utils/mockData';
+import { formatTgPreview } from './utils/formatters';
 import styles from './App.module.css';
 
 /* ─── КОНТЕКСТНЫЕ ПРИВЕТСТВИЯ ─────────────────────────────────── */
@@ -69,6 +71,7 @@ function App() {
   const [aiErrorText, setAiErrorText] = useState(null);
   const [tgErrorText, setTgErrorText] = useState(null);
   const [lastTgData, setLastTgData] = useState(null); // Для кнопки копирования
+  const [showCopyModal, setShowCopyModal] = useState(false);
 
   // ── Главный экран ──────────────────────────────────────────────
   const [text, setText] = useState('');
@@ -241,6 +244,9 @@ function App() {
     console.log('Отправляем в TG:', editedData, photo?.file ?? null);
     
     if (!settings.sendToTelegram) {
+      setLastTgData(formatTgPreview(editedData));
+      setShowCopyModal(true);
+
       if (photo?.url) URL.revokeObjectURL(photo.url);
       setPhoto(null);
       setText('');
@@ -516,6 +522,15 @@ function App() {
           setTgErrorText(null);
         }}
         onHome={() => setTgErrorText(null)}
+      />
+
+      <SuccessCopyModal
+        open={showCopyModal}
+        formattedText={lastTgData || ''}
+        onCopy={() => {
+          if (lastTgData) navigator.clipboard.writeText(lastTgData).catch(()=>{});
+        }}
+        onHome={() => setShowCopyModal(false)}
       />
     </div>
   );
