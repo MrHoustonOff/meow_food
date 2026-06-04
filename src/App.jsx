@@ -69,9 +69,7 @@ function App() {
   // 'idle' | 'ai_loading' | 'preview' | 'tg_sending'
   const [phase, setPhase] = useState('idle');
 
-  if (!isOnboardingComplete) {
-    return <Onboarding onComplete={() => setIsOnboardingComplete(true)} />;
-  }
+
 
   // ── Результат ИИ ──────────────────────────────────────────────
   const [aiResult, setAiResult] = useState(null);  // parsed JSON
@@ -352,6 +350,11 @@ function App() {
   // ══════════════════════════════════════════════════════════════
   //  РЕНДЕР
   // ══════════════════════════════════════════════════════════════
+
+  // ── Рендер Онбординга (до инициализации основного UI) ──────────
+  if (!isOnboardingComplete) {
+    return <Onboarding onComplete={() => setIsOnboardingComplete(true)} />;
+  }
 
   // ── Страница настроек ─────────────────────────────────────────
   if (view === 'settings') {
