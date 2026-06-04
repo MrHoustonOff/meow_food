@@ -19,12 +19,6 @@ const SecretField = ({ id, label, hint, value, onChange, placeholder = '••�
   const [revealed, setRevealed] = useState(false);
   const inputRef = useRef(null);
 
-  const handleReveal = () => {
-    setRevealed(true);
-    // Фокус — чтобы сразу можно было печатать
-    setTimeout(() => inputRef.current?.focus(), 0);
-  };
-
   const handleBlur = () => {
     // Если поле пустое — прячем снова
     if (!value) setRevealed(false);
@@ -35,7 +29,7 @@ const SecretField = ({ id, label, hint, value, onChange, placeholder = '••�
       <label htmlFor={id} className={styles.label}>{label}</label>
       {hint && <p className={styles.hint}>{hint}</p>}
 
-      <div className={`${styles.inputWrap} glass-mid`} onClick={!revealed ? handleReveal : undefined}>
+      <div className={`${styles.inputWrap} glass-mid`}>
         <input
           ref={inputRef}
           id={id}
@@ -43,19 +37,19 @@ const SecretField = ({ id, label, hint, value, onChange, placeholder = '••�
           className={`${styles.input} ${!revealed ? styles.blurred : ''}`}
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          onFocus={() => setRevealed(true)}
           onBlur={handleBlur}
           placeholder={placeholder}
-          readOnly={!revealed}
           autoComplete="off"
           spellCheck={false}
         />
         <button
           type="button"
           className={styles.eyeBtn}
-          onClick={(e) => {
+          onPointerDown={(e) => {
+            e.preventDefault(); // Предотвращаем потерю фокуса у инпута
             e.stopPropagation();
             setRevealed((v) => !v);
-            setTimeout(() => inputRef.current?.focus(), 0);
           }}
           aria-label={revealed ? 'Скрыть ключ' : 'Показать ключ'}
           tabIndex={-1}
