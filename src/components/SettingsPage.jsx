@@ -105,11 +105,42 @@ const SettingsPage = ({
                       onChange={(val) => updateField('aiKey', val)}
                       placeholder="gsk_••••••••••••••••"
                     />
-                    <div style={{ marginTop: 'var(--space-2)', padding: 'var(--space-2)', background: 'var(--accent-muted)', borderRadius: 'var(--radius-md)' }}>
-                      <p style={{ margin: 0, fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>
-                        Обычно используется мощная модель 70b. Если она перегружена, котик сам переключится на быструю 8b модель на 2 часа.
-                      </p>
-                    </div>
+                    {(() => {
+                      const fallbackUntil = localStorage.getItem('myau_groq_fallback_until');
+                      let isFallbackActive = false;
+                      let fallbackTimeLeft = '';
+                      if (fallbackUntil) {
+                        const untilTime = parseInt(fallbackUntil, 10);
+                        const now = Date.now();
+                        if (untilTime > now) {
+                          isFallbackActive = true;
+                          const diffMins = Math.ceil((untilTime - now) / 60000);
+                          const h = Math.floor(diffMins / 60);
+                          const m = diffMins % 60;
+                          fallbackTimeLeft = h > 0 ? `${h} ч ${m} мин` : `${m} мин`;
+                        }
+                      }
+                      
+                      return (
+                        <div style={{ marginTop: 'var(--space-2)', padding: 'var(--space-2)', background: 'var(--glass-bg)', borderRadius: 'var(--radius-md)', border: '1px solid var(--separator)' }}>
+                          <p style={{ margin: 0, fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>
+                            <b>Текущая модель:</b> {isFallbackActive ? 'llama-3.1-8b-instant' : 'llama-3.3-70b-versatile'}
+                            {isFallbackActive && <><br/><i>Сброс лимита через: {fallbackTimeLeft}</i></>}
+                          </p>
+                          {isFallbackActive && (
+                            <button 
+                              onClick={() => { 
+                                localStorage.removeItem('myau_groq_fallback_until'); 
+                                window.location.reload(); 
+                              }}
+                              style={{ marginTop: 6, fontSize: 'var(--text-xs)', color: 'var(--accent)', background: 'none', border: 'none', padding: 0, cursor: 'pointer', textDecoration: 'underline' }}
+                            >
+                              Сбросить лимит вручную
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </>
                 ) : (
                   <>
@@ -285,7 +316,7 @@ const SettingsPage = ({
               </button>
 
               <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-tertiary)', fontWeight: '600' }}>
-                Мяу-дневник v0.8 🐱
+                Мяувник v0.8
               </span>
             </section>
 
