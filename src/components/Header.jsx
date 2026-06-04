@@ -27,10 +27,12 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    // Убираем env(safe-area-inset-top). Делаем фиксированный отступ под "контракт"
-    padding: '44px 20px 12px 20px',
-    position: 'sticky',
+    // Поднимаем кнопки выше, уменьшая отступ
+    padding: '12px 20px',
+    position: 'fixed',
     top: 0,
+    left: 0,
+    right: 0,
     backgroundColor: 'transparent',
     zIndex: 100,
     pointerEvents: 'none',
