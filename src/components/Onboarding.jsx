@@ -153,7 +153,7 @@ const Onboarding = ({ onComplete }) => {
             </div>
           </div>
           
-          <div style={{ display: 'flex', gap: 'var(--space-2)', marginTop: 'auto', marginBottom: 'var(--space-4)', width: '100%', maxWidth: '280px' }}>
+          <div style={{ display: 'flex', gap: 'var(--space-2)', marginTop: 'var(--space-6)', marginBottom: 'var(--space-4)', width: '100%', maxWidth: '280px' }}>
             <button 
               className={`${styles.button} ${styles.buttonOutline} pressable`} 
               style={{ flex: 1, height: '48px', fontSize: '16px' }}
