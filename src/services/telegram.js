@@ -15,7 +15,10 @@ export async function send(text, photoFile, token, chatId) {
     try {
       const errData = await msgResponse.json();
       if (errData.description) errorDesc = errData.description;
-    } catch (e) {}
+      console.error("ОШИБКА TELEGRAM API (ПОЛНЫЙ ОТВЕТ):", errData);
+    } catch (e) {
+      console.error("ОШИБКА TELEGRAM API (НЕ ПОЛУЧИЛОСЬ ПРОЧИТАТЬ JSON):", e);
+    }
     throw new Error(`Telegram Error: ${errorDesc}`);
   }
 
