@@ -20,8 +20,7 @@ const SecretField = ({ id, label, hint, value, onChange, placeholder = '••�
   const inputRef = useRef(null);
 
   const handleBlur = () => {
-    // Если поле пустое — прячем снова
-    if (!value) setRevealed(false);
+    setRevealed(false);
   };
 
   return (
