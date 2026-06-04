@@ -105,6 +105,19 @@ const SettingsPage = ({
                       onChange={(val) => updateField('aiKey', val)}
                       placeholder="gsk_••••••••••••••••"
                     />
+                    <div className={styles.fieldGroup}>
+                      <span className={styles.fieldLabel}>Основная модель</span>
+                      <select 
+                        className={styles.input} 
+                        value={settings.groqModel || 'llama-3.3-70b-versatile'}
+                        onChange={(e) => updateField('groqModel', e.target.value)}
+                        style={{ fontFamily: 'var(--font-round)' }}
+                      >
+                        <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile (Умная, может падать)</option>
+                        <option value="llama-3.1-8b-instant">llama-3.1-8b-instant (Быстрая, стабильная)</option>
+                      </select>
+                    </div>
+
                     {(() => {
                       const fallbackUntil = localStorage.getItem('myau_groq_fallback_until');
                       let isFallbackActive = false;
@@ -121,10 +134,13 @@ const SettingsPage = ({
                         }
                       }
                       
+                      const currentPrimary = settings.groqModel || 'llama-3.3-70b-versatile';
+                      const currentModel = isFallbackActive ? 'llama-3.1-8b-instant' : currentPrimary;
+                      
                       return (
                         <div style={{ marginTop: 'var(--space-2)', padding: 'var(--space-2)', background: 'var(--glass-bg)', borderRadius: 'var(--radius-md)', border: '1px solid var(--separator)' }}>
                           <p style={{ margin: 0, fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>
-                            <b>Текущая модель:</b> {isFallbackActive ? 'llama-3.1-8b-instant' : 'llama-3.3-70b-versatile'}
+                            <b>Текущая модель:</b> {currentModel}
                             {isFallbackActive && <><br/><i>Сброс лимита через: {fallbackTimeLeft}</i></>}
                           </p>
                           {isFallbackActive && (

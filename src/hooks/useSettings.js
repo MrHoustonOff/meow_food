@@ -9,6 +9,7 @@ import { useState, useCallback } from 'react';
 const STORAGE_KEYS = {
   provider:       'myau_provider',
   aiKey:          'myau_api_key',
+  groqModel:      'myau_groq_model',
   ollamaUrl:      'myau_ollama_url',
   ollamaModel:    'myau_ollama_model',
   telegramToken:  'myau_tg_token',
@@ -17,8 +18,9 @@ const STORAGE_KEYS = {
 };
 
 const DEFAULTS = {
-  provider:       'groq',   // 'groq' | 'ollama'
+  provider:       'groq',   // 'groq' | 'ollama' | 'mock'
   aiKey:          '',
+  groqModel:      'llama-3.3-70b-versatile',
   ollamaUrl:      'http://localhost:11434',
   ollamaModel:    'llama3.1:8b',
   telegramToken:  '',
@@ -31,6 +33,7 @@ function loadSettings() {
   return {
     provider:       localStorage.getItem(STORAGE_KEYS.provider)       ?? DEFAULTS.provider,
     aiKey:          localStorage.getItem(STORAGE_KEYS.aiKey)          ?? DEFAULTS.aiKey,
+    groqModel:      localStorage.getItem(STORAGE_KEYS.groqModel)      ?? DEFAULTS.groqModel,
     ollamaUrl:      localStorage.getItem(STORAGE_KEYS.ollamaUrl)      ?? DEFAULTS.ollamaUrl,
     ollamaModel:    localStorage.getItem(STORAGE_KEYS.ollamaModel)    ?? DEFAULTS.ollamaModel,
     telegramToken:  localStorage.getItem(STORAGE_KEYS.telegramToken)  ?? DEFAULTS.telegramToken,

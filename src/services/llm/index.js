@@ -42,7 +42,7 @@ export async function complete(messages, settings) {
       useFallback = true;
     }
 
-    const primaryModel = import.meta.env?.VITE_GROQ_PRIMARY_MODEL || 'llama-3.3-70b-versatile';
+    const primaryModel = settings.groqModel || import.meta.env?.VITE_GROQ_PRIMARY_MODEL || 'llama-3.3-70b-versatile';
     const fallbackModel = import.meta.env?.VITE_GROQ_FALLBACK_MODEL || 'llama-3.1-8b-instant';
     
     let model = useFallback ? fallbackModel : primaryModel;

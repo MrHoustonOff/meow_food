@@ -11,10 +11,10 @@ const Onboarding = ({ onComplete }) => {
   
   const [toast, setToast] = useState('');
 
-  // Auto skip to keys if already started
+  // Отмечаем, что мы начали вводить ключи
   useEffect(() => {
-    if (localStorage.getItem('myau_keys_started') === 'true' && slide < 3) {
-      setSlide(3);
+    if (slide === 3) {
+      localStorage.setItem('myau_keys_started', 'true');
     }
   }, [slide]);
 
