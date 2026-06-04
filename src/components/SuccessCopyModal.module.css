@@ -52,6 +52,15 @@
   -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
   margin-bottom: var(--space-4);
+  scrollbar-width: thin;
+  scrollbar-color: var(--separator) transparent;
+}
+
+.codeContainer::-webkit-scrollbar { width: 4px; }
+.codeContainer::-webkit-scrollbar-track { background: transparent; }
+.codeContainer::-webkit-scrollbar-thumb {
+  background: var(--separator);
+  border-radius: 99px;
 }
 
 .pre {
@@ -70,21 +79,18 @@
   gap: var(--space-2);
 }
 
-.btnSolid {
+.btnPrimary {
   width: 100%;
   padding: var(--space-3);
-  border-radius: var(--radius-lg);
-  font-family: var(--font-round);
-  font-weight: var(--weight-bold);
-  font-size: var(--text-md);
+  border-radius: var(--radius-xl);
   border: none;
   background: var(--accent);
-  color: var(--text-on-accent);
-  box-shadow: var(--shadow-accent);
+  color: #fff;
+  font-family: var(--font-round);
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
   cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  min-height: 48px;
 }
 
 .btnGhost {

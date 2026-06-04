@@ -21,11 +21,11 @@ function TgSuccessModal({ open, onHome }) {
         
         <h2 className={styles.title}>Успех!</h2>
         
-        <p className={styles.desc} style={{ marginBottom: 'var(--space-4)' }}>
+        <p className={styles.text} style={{ marginBottom: 'var(--space-4)' }}>
           Всё успешно доставлено в Telegram! Котик доволен 🐾
         </p>
 
-        <div className={styles.actions} style={{ width: '100%', marginTop: 0 }}>
+        <div className={styles.buttonStack} style={{ width: '100%', marginTop: 0 }}>
           <button
             id="btn-tg-success"
             type="button"

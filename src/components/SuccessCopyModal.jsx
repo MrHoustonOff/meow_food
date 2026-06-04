@@ -22,7 +22,7 @@ const SuccessCopyModal = ({ open, formattedText, onCopy, onHome }) => {
         <div className={styles.buttonStack}>
           <button 
             id="btn-success-copy" 
-            className={`${styles.btnSolid} pressable`} 
+            className={`${styles.btnPrimary} pressable`} 
             onClick={onCopy}
           >
             Скопировать
