@@ -315,22 +315,35 @@ const SettingsPage = ({
                 Отправить тестовый запрос 🐾
               </button>
               
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0 var(--space-2)' }}>
-                <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)' }}>Dev Mode: Вечный онбординг</span>
-                <input 
-                  type="checkbox"
-                  checked={localStorage.getItem('myau_dev_force_onboarding') === 'true'}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      localStorage.setItem('myau_dev_force_onboarding', 'true');
-                    } else {
-                      localStorage.removeItem('myau_dev_force_onboarding');
-                    }
-                    window.location.reload();
-                  }}
-                  style={{ width: '20px', height: '20px', accentColor: 'var(--accent)' }}
-                />
-              </div>
+              <button
+                type="button"
+                className="pressable no-select"
+                style={{
+                  width: '100%',
+                  height: '48px',
+                  borderRadius: 'var(--radius-xl)',
+                  background: localStorage.getItem('myau_dev_force_onboarding') === 'true' ? 'var(--accent)' : 'transparent',
+                  border: '1.5px solid var(--accent)',
+                  fontFamily: 'var(--font-round)',
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  color: localStorage.getItem('myau_dev_force_onboarding') === 'true' ? '#fff' : 'var(--accent)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+                onClick={() => {
+                  const isDev = localStorage.getItem('myau_dev_force_onboarding') === 'true';
+                  if (isDev) {
+                    localStorage.removeItem('myau_dev_force_onboarding');
+                  } else {
+                    localStorage.setItem('myau_dev_force_onboarding', 'true');
+                  }
+                  window.location.reload();
+                }}
+              >
+                {localStorage.getItem('myau_dev_force_onboarding') === 'true' ? 'Dev Mode: Включен (Выключить)' : 'Dev Mode: Выключен (Включить)'}
+              </button>
 
               <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-tertiary)', fontWeight: '600' }}>
                 Мяувник v0.8
