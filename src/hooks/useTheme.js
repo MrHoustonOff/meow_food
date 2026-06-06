@@ -103,9 +103,16 @@ export const useTheme = () => {
   }, [systemTheme]);
 
   const toggleTheme = useCallback(() => {
-    if (systemTheme) return; // Блокируем ручное изменение
-    setManualTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
-  }, [systemTheme]);
+    if (systemTheme) {
+      setSystemThemeState(false);
+      localStorage.setItem(STORAGE_KEYS.systemTheme, 'false');
+      setManualTheme(sysPref === 'light' ? 'dark' : 'light');
+      return true;
+    } else {
+      setManualTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+      return false;
+    }
+  }, [systemTheme, sysPref]);
 
   const setSystemTheme = useCallback((val) => {
     localStorage.setItem(STORAGE_KEYS.systemTheme, val);

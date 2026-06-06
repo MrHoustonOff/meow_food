@@ -44,7 +44,7 @@ const FoodFormModal = ({ open, initialData, onSave, onCancel }) => {
       : null;
 
     onSave({
-      id: initialData?.id || crypto.randomUUID(),
+      id: initialData?.id || (Date.now().toString() + Math.random().toString(36).substring(2)),
       name: name.trim(),
       amount: amount.trim() || null,
       macros
