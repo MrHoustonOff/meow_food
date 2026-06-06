@@ -156,9 +156,12 @@ const LINE_KEYS = [
   { key: 'carbs',    label: '🍞 Углев', color: '#34C759' },
 ];
 
+const ITEMS_PER_PAGE = 10;
+
 const DiaryPage = ({ onBack, entries, addEntry, updateEntry, deleteEntry, settings }) => {
   const [tab, setTab]       = useState('records'); // 'records' | 'charts'
   const [period, setPeriod] = useState('week');
+  const [page, setPage]     = useState(1);
 
   // Записи модалки
   const [entryModalOpen, setEntryModalOpen] = useState(false);
@@ -189,6 +192,14 @@ const DiaryPage = ({ onBack, entries, addEntry, updateEntry, deleteEntry, settin
     [entries, start]
   );
 
+  // Пагинация
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+  const paginated  = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+
+  // Сброс страницы при смене периода или вкладки
+  const handlePeriodChange = (p) => { setPeriod(p); setPage(1); };
+  const handleTabChange    = (t) => { setTab(t); setPage(1); };
+
   // Данные для графика
   const chartData = useMemo(() => {
     const map = {};
@@ -209,12 +220,25 @@ const DiaryPage = ({ onBack, entries, addEntry, updateEntry, deleteEntry, settin
 
   const handleSaveEntry = (data) => {
     if (data.id) {
+      // Редактирование — проверяем, нет ли другой записи с такой же датой
+      const duplicate = entries.find(e => e.date === data.date && e.id !== data.id);
+      if (duplicate) {
+        alert(`Запись за ${data.date} уже существует. Отредактируй её.`);
+        return;
+      }
       updateEntry(data.id, data);
     } else {
+      // Новая запись — запрет дубля по дате
+      const duplicate = entries.find(e => e.date === data.date);
+      if (duplicate) {
+        alert(`Запись за ${data.date} уже существует. Отредактируй её.`);
+        return;
+      }
       addEntry(data);
     }
     setEntryModalOpen(false);
     setEditingEntry(null);
+    setPage(1);
   };
 
   const handleEdit = (entry) => {
@@ -245,11 +269,11 @@ const DiaryPage = ({ onBack, entries, addEntry, updateEntry, deleteEntry, settin
       <div className={styles.innerTabs}>
         <button
           className={`${styles.innerTab} ${tab === 'records' ? styles.innerTabActive : ''}`}
-          onClick={() => setTab('records')}
+          onClick={() => handleTabChange('records')}
         >Записи</button>
         <button
           className={`${styles.innerTab} ${tab === 'charts' ? styles.innerTabActive : ''}`}
-          onClick={() => setTab('charts')}
+          onClick={() => handleTabChange('charts')}
         >Графики</button>
       </div>
 
@@ -259,7 +283,7 @@ const DiaryPage = ({ onBack, entries, addEntry, updateEntry, deleteEntry, settin
           <button
             key={p.key}
             className={`${styles.periodBtn} ${period === p.key ? styles.periodBtnActive : ''}`}
-            onClick={() => setPeriod(p.key)}
+            onClick={() => handlePeriodChange(p.key)}
           >{p.label}</button>
         ))}
       </div>
@@ -277,15 +301,39 @@ const DiaryPage = ({ onBack, entries, addEntry, updateEntry, deleteEntry, settin
               <p>Записей нет. Нажми + чтобы добавить!</p>
             </div>
           ) : (
-            filtered.map(entry => (
-              <EntryCard
-                key={entry.id}
-                entry={entry}
-                goals={goals}
-                onEdit={handleEdit}
-                onDelete={handleDeleteConfirm}
-              />
-            ))
+            <>
+              {paginated.map(entry => (
+                <EntryCard
+                  key={entry.id}
+                  entry={entry}
+                  goals={goals}
+                  onEdit={handleEdit}
+                  onDelete={handleDeleteConfirm}
+                />
+              ))}
+
+              {totalPages > 1 && (
+                <div className={styles.pagination}>
+                  <button
+                    className={styles.pageBtn}
+                    disabled={page === 1}
+                    onClick={() => setPage(p => p - 1)}
+                  >‹</button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+                    <button
+                      key={n}
+                      className={`${styles.pageBtn} ${page === n ? styles.pageBtnActive : ''}`}
+                      onClick={() => setPage(n)}
+                    >{n}</button>
+                  ))}
+                  <button
+                    className={styles.pageBtn}
+                    disabled={page === totalPages}
+                    onClick={() => setPage(p => p + 1)}
+                  >›</button>
+                </div>
+              )}
+            </>
           )}
           <div style={{ height: 100 }} />
         </div>

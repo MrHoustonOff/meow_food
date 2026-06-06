@@ -41,133 +41,145 @@ function GoalsSection({ settings, updateField }) {
   const raw = calcGoals({ gender, weight, height, age, activity, goal })._raw;
 
   const save = (patch) => {
-    const next = { gender, weight, height, age, activity, goal, ...custom, ...patch };
+    const next = { gender, weight, height, age, activity, goal,
+      custom_calories: custom.calories, custom_proteins: custom.proteins,
+      custom_fats: custom.fats, custom_carbs: custom.carbs,
+      ...patch };
     updateField('goals', next);
   };
 
-  const handleBlur = () => {
-    save({
-      custom_calories: custom.calories,
-      custom_proteins: custom.proteins,
-      custom_fats:     custom.fats,
-      custom_carbs:    custom.carbs,
-    });
-  };
+  const handleBlur = () => save({
+    custom_calories: custom.calories,
+    custom_proteins: custom.proteins,
+    custom_fats:     custom.fats,
+    custom_carbs:    custom.carbs,
+  });
 
   const resetCustom = () => {
-    const c = { calories: null, proteins: null, fats: null, carbs: null };
-    setCustom(c);
+    setCustom({ calories: null, proteins: null, fats: null, carbs: null });
     save({ custom_calories: null, custom_proteins: null, custom_fats: null, custom_carbs: null });
-  };
-
-  const numBtn = (field, setState) => (val) => {
-    setState(val);
-    save({ [field]: val });
   };
 
   const disp = (field) => custom[field] ?? raw[field];
 
+  // Общий стиль инлайн-инпута числа (используется в нескольких местах)
+  const numInputStyle = {
+    width: 72,
+    padding: '8px 12px',
+    borderRadius: 'var(--radius-md)',
+    border: '1px solid var(--separator)',
+    background: 'var(--bg-app)',
+    color: 'var(--text-primary)',
+    fontFamily: 'var(--font-round)',
+    fontSize: 15,
+    fontWeight: 600,
+    outline: 'none',
+    textAlign: 'right',
+  };
+
+  const segBtnStyle = (active) => ({
+    flex: 1,
+    padding: '8px 4px',
+    borderRadius: 'var(--radius-lg)',
+    border: active ? 'none' : '1px solid var(--separator)',
+    background: active ? 'var(--accent)' : 'transparent',
+    color: active ? '#fff' : 'var(--text-secondary)',
+    fontFamily: 'var(--font-round)',
+    fontSize: 13,
+    fontWeight: 600,
+    cursor: 'pointer',
+    transition: 'all 150ms ease',
+  });
+
   return (
-    <section style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
-      <div className={styles.sectionTitle}>🎯 Мои цели</div>
+    <section className={styles.section}>
+      <h2 className={styles.sectionTitle} style={{ fontSize: '20px', textTransform: 'none', color: 'var(--text-primary)', marginBottom: '4px' }}>
+        Мои цели
+      </h2>
 
-      {/* Пол */}
-      <div className={styles.settingRow}>
-        <span className={styles.settingLabel}>Пол</span>
-        <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-          {[{v:'male',l:'Мужчина'},{v:'female',l:'Женщина'}].map(o => (
-            <button key={o.v}
-              style={{
-                padding: '6px 14px',
-                borderRadius: 'var(--radius-lg)',
-                border: gender === o.v ? 'none' : '1px solid var(--separator)',
-                background: gender === o.v ? 'var(--accent)' : 'transparent',
-                color: gender === o.v ? '#fff' : 'var(--text-secondary)',
-                fontFamily: 'var(--font-round)', fontSize: 13, fontWeight: 600, cursor: 'pointer',
-              }}
-              onClick={() => { setGender(o.v); save({ gender: o.v }); }}
-            >{o.l}</button>
-          ))}
+      {/* ── Пол ── */}
+      <div className={styles.card} style={{ background: 'var(--glass-bg)', padding: 'var(--space-4)', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)', borderRadius: 'var(--radius-xl)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>Пол</span>
+          <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+            {[{ v: 'male', l: 'Мужчина' }, { v: 'female', l: 'Женщина' }].map(o => (
+              <button key={o.v} style={segBtnStyle(gender === o.v)} onClick={() => { setGender(o.v); save({ gender: o.v }); }}>
+                {o.l}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* Вес / Рост / Возраст */}
-      {[
-        { label: 'Вес (кг)', val: weight, set: numBtn('weight', setWeight) },
-        { label: 'Рост (см)', val: height, set: numBtn('height', setHeight) },
-        { label: 'Возраст', val: age, set: numBtn('age', setAge) },
-      ].map(it => (
-        <div key={it.label} className={styles.settingRow}>
-          <span className={styles.settingLabel}>{it.label}</span>
-          <input
-            type="number" inputMode="decimal"
-            style={{ width: 80, padding: '8px 12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--separator)', background: 'var(--bg-app)', color: 'var(--text-primary)', fontFamily: 'var(--font-round)', fontSize: 15, fontWeight: 600, outline: 'none', textAlign: 'right' }}
-            value={it.val}
-            onChange={e => it.set(Number(e.target.value))}
-          />
-        </div>
-      ))}
-
-      {/* Активность */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-        <span className={styles.settingLabel}>Активность</span>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
-          {ACTIVITY_OPTIONS.map(o => (
-            <button key={o.value}
-              style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: '10px 14px', borderRadius: 'var(--radius-lg)',
-                border: activity === o.value ? 'none' : '1px solid var(--separator)',
-                background: activity === o.value ? 'var(--accent)' : 'var(--bg-app)',
-                color: activity === o.value ? '#fff' : 'var(--text-primary)',
-                fontFamily: 'var(--font-round)', fontSize: 14, fontWeight: 600, cursor: 'pointer',
-                textAlign: 'left',
-              }}
-              onClick={() => { setActivity(o.value); save({ activity: o.value }); }}
-            >
-              <span>{o.label}</span>
-              <span style={{ fontSize: 12, opacity: 0.7 }}>{o.hint}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Цель */}
-      <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-        {GOAL_OPTIONS.map(o => (
-          <button key={o.value}
-            style={{
-              flex: 1, padding: '8px 4px', borderRadius: 'var(--radius-lg)',
-              border: goal === o.value ? 'none' : '1px solid var(--separator)',
-              background: goal === o.value ? 'var(--accent)' : 'transparent',
-              color: goal === o.value ? '#fff' : 'var(--text-secondary)',
-              fontFamily: 'var(--font-round)', fontSize: 13, fontWeight: 600, cursor: 'pointer',
-            }}
-            onClick={() => { setGoal(o.value); save({ goal: o.value }); }}
-          >{o.emoji} {o.label}</button>
+        {/* ── Вес / Рост / Возраст ── */}
+        {[
+          { label: 'Вес (кг)',  val: weight, field: 'weight', set: setWeight },
+          { label: 'Рост (см)', val: height, field: 'height', set: setHeight },
+          { label: 'Возраст',   val: age,    field: 'age',    set: setAge },
+        ].map(it => (
+          <div key={it.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--separator)', paddingTop: 'var(--space-3)' }}>
+            <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>{it.label}</span>
+            <input
+              type="number" inputMode="decimal"
+              style={numInputStyle}
+              value={it.val}
+              onChange={e => { it.set(Number(e.target.value)); save({ [it.field]: Number(e.target.value) }); }}
+            />
+          </div>
         ))}
       </div>
 
-      {/* Превью целей */}
-      <div style={{ background: 'var(--bg-app)', borderRadius: 'var(--radius-lg)', padding: 'var(--space-4)', display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Рассчитано для вас</span>
+      {/* ── Активность ── */}
+      <div className={styles.card} style={{ background: 'var(--glass-bg)', borderRadius: 'var(--radius-xl)', overflow: 'hidden' }}>
+        <div style={{ padding: 'var(--space-3) var(--space-4)', borderBottom: '1px solid var(--separator)' }}>
+          <span style={{ fontSize: 13, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-secondary)' }}>Активность</span>
+        </div>
+        {ACTIVITY_OPTIONS.map((o, i) => (
           <button
-            style={{ fontSize: 12, color: 'var(--accent)', background: 'none', border: 'none', fontFamily: 'var(--font-round)', fontWeight: 600, cursor: 'pointer' }}
-            onClick={resetCustom}
-          >Сбросить</button>
+            key={o.value}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              width: '100%', padding: '14px var(--space-4)',
+              background: activity === o.value ? 'var(--accent-muted)' : 'transparent',
+              border: 'none',
+              borderTop: i > 0 ? '1px solid var(--separator)' : 'none',
+              fontFamily: 'var(--font-round)', cursor: 'pointer', textAlign: 'left',
+            }}
+            onClick={() => { setActivity(o.value); save({ activity: o.value }); }}
+          >
+            <span style={{ fontSize: 15, fontWeight: 600, color: activity === o.value ? 'var(--accent)' : 'var(--text-primary)' }}>{o.label}</span>
+            <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>{o.hint}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* ── Цель ── */}
+      <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+        {GOAL_OPTIONS.map(o => (
+          <button key={o.value} style={segBtnStyle(goal === o.value)} onClick={() => { setGoal(o.value); save({ goal: o.value }); }}>
+            {o.label}
+          </button>
+        ))}
+      </div>
+
+      {/* ── Превью целей ── */}
+      <div className={styles.card} style={{ background: 'var(--glass-bg)', borderRadius: 'var(--radius-xl)', overflow: 'hidden' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 'var(--space-3) var(--space-4)', borderBottom: '1px solid var(--separator)' }}>
+          <span style={{ fontSize: 13, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-secondary)' }}>Рассчитано для вас</span>
+          <button style={{ fontSize: 13, color: 'var(--accent)', background: 'none', border: 'none', fontFamily: 'var(--font-round)', fontWeight: 600, cursor: 'pointer' }} onClick={resetCustom}>
+            Сбросить
+          </button>
         </div>
         {[
-          { key: 'calories', label: '🔥 Ккал' },
-          { key: 'proteins', label: '🥩 Белки (г)' },
-          { key: 'fats',     label: '🥑 Жиры (г)' },
-          { key: 'carbs',    label: '🍞 Углеводы (г)' },
-        ].map(it => (
-          <div key={it.key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 'var(--space-2)' }}>
-            <span style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 600 }}>{it.label}</span>
+          { key: 'calories', label: 'Калории (ккал)' },
+          { key: 'proteins', label: 'Белки (г)' },
+          { key: 'fats',     label: 'Жиры (г)' },
+          { key: 'carbs',    label: 'Углеводы (г)' },
+        ].map((it, i) => (
+          <div key={it.key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px var(--space-4)', borderTop: i > 0 ? '1px solid var(--separator)' : 'none' }}>
+            <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>{it.label}</span>
             <input
               type="number" inputMode="decimal"
-              style={{ width: 80, padding: '6px 10px', borderRadius: 'var(--radius-md)', border: '1px solid var(--separator)', background: 'var(--bg-surface)', color: 'var(--text-primary)', fontFamily: 'var(--font-round)', fontSize: 15, fontWeight: 700, outline: 'none', textAlign: 'right' }}
+              style={{ ...numInputStyle, background: 'var(--bg-surface)' }}
               value={disp(it.key)}
               onChange={e => setCustom(prev => ({ ...prev, [it.key]: e.target.value === '' ? null : Number(e.target.value) }))}
               onBlur={handleBlur}

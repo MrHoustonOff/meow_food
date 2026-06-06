@@ -242,6 +242,40 @@
   font-style: italic;
 }
 
+/* ── Пагинация ── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-2) 0;
+}
+
+.pageBtn {
+  min-width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--separator);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-round);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 150ms ease;
+  padding: 0 var(--space-2);
+}
+.pageBtn:disabled { opacity: 0.3; pointer-events: none; }
+.pageBtn:active { opacity: 0.6; }
+.pageBtnActive {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
 /* ── Пустое состояние ── */
 .empty {
   text-align: center;
