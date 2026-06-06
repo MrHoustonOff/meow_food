@@ -4,11 +4,15 @@
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  z-index: 900;
+  z-index: 1000;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
   padding: var(--space-4);
+  padding-top: max(var(--space-6), env(safe-area-inset-top));
+  padding-bottom: max(var(--space-6), env(safe-area-inset-bottom));
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   animation: fadeIn 200ms ease;
 }
 
@@ -20,6 +24,7 @@
 .card {
   width: 100%;
   max-width: 320px;
+  margin: auto 0;
   border-radius: var(--radius-xl);
   padding: var(--space-4);
   display: flex;
