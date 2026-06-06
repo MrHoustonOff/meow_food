@@ -492,8 +492,25 @@ const SettingsPage = ({
               ))}
             </section>
 
-            {/* ════ DEV SECTION ════════════════════════════════════ */}
-            <section className={styles.section} style={{ marginTop: 'var(--space-6)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-4)' }}>
+            {/* ── ЦЕЛИ И ПРОФИЛЬ ─────────────────────────────────── */}
+            <GoalsSection settings={settings} updateField={updateField} />
+
+            {/* ── СПРАВКА ПО ФОРМУЛЕ ───────────────────────── */}
+            <section className={styles.section}>
+              <div style={{ background: 'var(--bg-app)', borderRadius: 'var(--radius-lg)', padding: 'var(--space-4)', display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
+                <span style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-tertiary)' }}>Формула расчёта</span>
+                <p style={{ margin: 0, fontSize: 13, color: 'var(--text-tertiary)', lineHeight: 1.6 }}>
+                  <b>Миффлин–Сан Жеор:</b><br />
+                  Муж: BMR = 10×вес + 6.25×рост − 5×возраст + 5<br />
+                  Жен: BMR = 10×вес + 6.25×рост − 5×возраст − 161<br />
+                  TDEE = BMR × коэффициент активности<br />
+                  Белки: 1.8 г/кг · вес | Жиры: 25% ккал | Углеводы: остаток
+                </p>
+              </div>
+            </section>
+
+            {/* ── Тестовый запрос + версия ── */}
+            <section className={styles.section} style={{ alignItems: 'center' }}>
               <button
                 type="button"
                 className="pressable no-select"
@@ -502,64 +519,26 @@ const SettingsPage = ({
                   height: '54px',
                   borderRadius: 'var(--radius-xl)',
                   background: 'var(--glass-bg)',
-                  WebkitBackdropFilter: 'var(--glass-blur)',
                   backdropFilter: 'var(--glass-blur)',
                   border: '1.5px solid var(--accent)',
                   boxShadow: 'var(--shadow-accent)',
                   fontFamily: 'var(--font-round)',
                   fontSize: '16px',
                   fontWeight: '700',
-                  letterSpacing: '-0.01em',
                   color: 'var(--accent)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: 'var(--space-2)'
                 }}
-                onClick={() => {
-                  if (onTestApi) onTestApi();
-                }}
+                onClick={() => { if (onTestApi) onTestApi(); }}
               >
-                Отправить тестовый запрос 🐾
-              </button>
-              
-              <button
-                type="button"
-                className="pressable no-select"
-                style={{
-                  width: '100%',
-                  height: '48px',
-                  borderRadius: 'var(--radius-xl)',
-                  background: localStorage.getItem('myau_dev_force_onboarding') === 'true' ? 'var(--accent)' : 'transparent',
-                  border: '1.5px solid var(--accent)',
-                  fontFamily: 'var(--font-round)',
-                  fontSize: '14px',
-                  fontWeight: '700',
-                  color: localStorage.getItem('myau_dev_force_onboarding') === 'true' ? '#fff' : 'var(--accent)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-                onClick={() => {
-                  const isDev = localStorage.getItem('myau_dev_force_onboarding') === 'true';
-                  if (isDev) {
-                    localStorage.removeItem('myau_dev_force_onboarding');
-                  } else {
-                    localStorage.setItem('myau_dev_force_onboarding', 'true');
-                  }
-                  window.location.reload();
-                }}
-              >
-                {localStorage.getItem('myau_dev_force_onboarding') === 'true' ? 'Dev Mode: Включен (Выключить)' : 'Dev Mode: Выключен (Включить)'}
+                Тестовый запрос к ИИ
               </button>
 
               <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-tertiary)', fontWeight: '600' }}>
                 Мяувник v1.0
               </span>
             </section>
-
-            {/* ── ЦЕЛИ И ПРОФИЛЬ ─────────────────────────────────── */}
-            <GoalsSection settings={settings} updateField={updateField} />
 
             <div className="bottom-nav-spacer" />
           </div>
