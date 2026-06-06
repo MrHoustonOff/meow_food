@@ -515,7 +515,10 @@ function App() {
                   <div className={styles.selectedJournalList}>
                     {selectedJournalFoods.map((jf, idx) => (
                       <div key={`${jf.id}-${idx}`} className={`${styles.selectedJournalItem} glass-mid`}>
-                        <span className={styles.selectedJournalName}>{jf.name}</span>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <span className={styles.selectedJournalName}>{jf.name}</span>
+                          {jf.amount && <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{jf.isExactGrams ? `${jf.amount}г` : jf.amount}</span>}
+                        </div>
                         <button 
                           className={styles.selectedJournalRemove}
                           onClick={() => setSelectedJournalFoods(selectedJournalFoods.filter((_, i) => i !== idx))}

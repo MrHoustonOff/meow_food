@@ -158,7 +158,7 @@ const JournalPage = ({ onBack, selectedFoods, setSelectedFoods }) => {
                         <span className={styles.foodIndex}>{((page - 1) * ITEMS_PER_PAGE) + idx + 1}.</span>
                         <div>
                           <h3 className={styles.foodName}>{food.name}</h3>
-                          {food.amount && <p className={styles.foodAmount}>{food.amount}</p>}
+                          {food.amount && <p className={styles.foodAmount}>{food.isExactGrams ? `${food.amount}г` : food.amount}</p>}
                         </div>
                       </div>
                       <div className={styles.actions}>

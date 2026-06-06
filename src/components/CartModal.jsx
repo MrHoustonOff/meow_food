@@ -26,7 +26,7 @@ const CartModal = ({ open, cartItems, onUpdateCart, onEditItem, onClose }) => {
               <div key={item.cartId} className={styles.item}>
                 <div className={styles.info}>
                   <span className={styles.name}>{item.name}</span>
-                  {item.amount && <span className={styles.amount}>{item.amount}</span>}
+                  {item.amount && <span className={styles.amount}>{item.isExactGrams ? `${item.amount}г` : item.amount}</span>}
                 </div>
                 <div className={styles.actions}>
                   <button className={`${styles.actionBtn} ${styles.btnEdit} pressable`} onClick={() => onEditItem(item)}>
