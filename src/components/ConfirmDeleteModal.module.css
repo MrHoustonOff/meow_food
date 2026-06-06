@@ -1,0 +1,82 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  animation: fadeIn 200ms ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.card {
+  width: 100%;
+  max-width: 300px;
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  text-align: center;
+  animation: popIn 300ms cubic-bezier(0.3, 1.2, 0.4, 1);
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.title {
+  font-family: var(--font-round);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.buttons {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-round);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 150ms ease;
+}
+
+.btn:active {
+  opacity: 0.7;
+}
+
+.btnCancel {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--separator);
+}
+
+.btnConfirm {
+  background: #ff3b30;
+  color: #fff;
+}

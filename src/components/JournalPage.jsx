@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styles from './JournalPage.module.css';
 import FoodFormModal from './FoodFormModal.jsx';
+import ConfirmDeleteModal from './ConfirmDeleteModal.jsx';
+
+const ITEMS_PER_PAGE = 10;
 
 const JournalPage = ({ onBack, onSelectFood }) => {
   const [foods, setFoods] = useState([]);
@@ -8,6 +11,11 @@ const JournalPage = ({ onBack, onSelectFood }) => {
   
   const [modalOpen, setModalOpen] = useState(false);
   const [editingFood, setEditingFood] = useState(null);
+
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [foodToDelete, setFoodToDelete] = useState(null);
+
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     const stored = localStorage.getItem('myau_food_journal');
@@ -35,10 +43,22 @@ const JournalPage = ({ onBack, onSelectFood }) => {
     setEditingFood(null);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm('Точно удалить блюдо?')) {
-      saveToStorage(foods.filter(f => f.id !== id));
+  const requestDelete = (id) => {
+    setFoodToDelete(id);
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (foodToDelete) {
+      saveToStorage(foods.filter(f => f.id !== foodToDelete));
     }
+    setDeleteModalOpen(false);
+    setFoodToDelete(null);
+  };
+
+  const cancelDelete = () => {
+    setDeleteModalOpen(false);
+    setFoodToDelete(null);
   };
 
   const openEdit = (food) => {
@@ -54,6 +74,14 @@ const JournalPage = ({ onBack, onSelectFood }) => {
   const filteredFoods = foods.filter(f => 
     f.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const totalPages = Math.ceil(filteredFoods.length / ITEMS_PER_PAGE) || 1;
+  const paginatedFoods = filteredFoods.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+
+  // Reset page if search changes
+  useEffect(() => {
+    setPage(1);
+  }, [searchQuery]);
 
   return (
     <div className={styles.page}>
@@ -88,18 +116,21 @@ const JournalPage = ({ onBack, onSelectFood }) => {
                 {searchQuery ? 'Ничего не найдено 😿' : 'Здесь пока нет рыбов...'}
               </div>
             ) : (
-              filteredFoods.map(food => (
+              paginatedFoods.map((food, idx) => (
                 <div key={food.id} className={`${styles.card} glass-mid`}>
                   <div className={styles.cardHeader}>
-                    <div>
-                      <h3 className={styles.foodName}>{food.name}</h3>
-                      {food.amount && <p className={styles.foodAmount}>{food.amount}</p>}
+                    <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+                      <span className={styles.foodIndex}>{((page - 1) * ITEMS_PER_PAGE) + idx + 1}.</span>
+                      <div>
+                        <h3 className={styles.foodName}>{food.name}</h3>
+                        {food.amount && <p className={styles.foodAmount}>{food.amount}</p>}
+                      </div>
                     </div>
                     <div className={styles.actions}>
                       <button className={styles.actionBtn} onClick={() => openEdit(food)}>
                         ✏️
                       </button>
-                      <button className={`${styles.actionBtn} ${styles.deleteBtn}`} onClick={() => handleDelete(food.id)}>
+                      <button className={`${styles.actionBtn} ${styles.deleteBtn}`} onClick={() => requestDelete(food.id)}>
                         🗑️
                       </button>
                     </div>
@@ -146,6 +177,27 @@ const JournalPage = ({ onBack, onSelectFood }) => {
                 </div>
               ))
             )}
+            
+            {/* Пагинация */}
+            {totalPages > 1 && (
+              <div className={styles.pagination}>
+                <button 
+                  className={`${styles.pageBtn} pressable`} 
+                  disabled={page === 1}
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                >
+                  Назад
+                </button>
+                <span className={styles.pageInfo}>{page} / {totalPages}</span>
+                <button 
+                  className={`${styles.pageBtn} pressable`} 
+                  disabled={page === totalPages}
+                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                >
+                  Вперед
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -162,6 +214,12 @@ const JournalPage = ({ onBack, onSelectFood }) => {
           setModalOpen(false);
           setEditingFood(null);
         }} 
+      />
+
+      <ConfirmDeleteModal 
+        open={deleteModalOpen}
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
       />
     </div>
   );

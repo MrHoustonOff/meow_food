@@ -30,24 +30,6 @@ const Header = ({ theme, toggleTheme, onSettings, onJournal }) => {
     <>
       <header className={styles.header}>
         <button
-          id="btn-journal"
-          className={`${styles.iconButton} pressable no-select glass-mid`}
-          onMouseDown={() => setJournalPressed(true)}
-          onMouseUp={() => setJournalPressed(false)}
-          onTouchStart={() => setJournalPressed(true)}
-          onTouchEnd={() => setJournalPressed(false)}
-          onClick={onJournal}
-          aria-label="Мяунал еды"
-        >
-          <Book
-            size={20}
-            strokeWidth={2}
-            className={styles.icon}
-            style={{ opacity: journalPressed ? 0.6 : 1 }}
-          />
-        </button>
-
-        <button
           id="btn-settings"
           className={`${styles.iconButton} pressable no-select glass-mid`}
           onMouseDown={() => setSettingsPressed(true)}
@@ -62,6 +44,24 @@ const Header = ({ theme, toggleTheme, onSettings, onJournal }) => {
             strokeWidth={2}
             className={styles.icon}
             style={{ opacity: settingsPressed ? 0.6 : 1 }}
+          />
+        </button>
+
+        <button
+          id="btn-journal"
+          className={`${styles.iconButton} pressable no-select glass-mid`}
+          onMouseDown={() => setJournalPressed(true)}
+          onMouseUp={() => setJournalPressed(false)}
+          onTouchStart={() => setJournalPressed(true)}
+          onTouchEnd={() => setJournalPressed(false)}
+          onClick={onJournal}
+          aria-label="Мяунал еды"
+        >
+          <Book
+            size={20}
+            strokeWidth={2}
+            className={styles.icon}
+            style={{ opacity: journalPressed ? 0.6 : 1 }}
           />
         </button>
 

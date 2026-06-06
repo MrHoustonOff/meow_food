@@ -33,11 +33,14 @@
 .pageHeader {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  justify-content: center;
   padding: var(--space-4) var(--space-4) var(--space-6);
+  position: relative;
 }
 
 .backBtn {
+  position: absolute;
+  left: var(--space-4);
   display: flex;
   align-items: center;
   gap: 2px;
