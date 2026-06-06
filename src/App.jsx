@@ -259,7 +259,7 @@ function App() {
           const journalFoodsFormatted = selectedJournalFoods.map(jf => ({
             name: jf.name,
             amount: jf.amount || null,
-            macros: jf.macros ? { per_100g: null, total: jf.macros, total_weight: jf.amount } : null
+            macros: jf.macros ? { per_100g: jf.macros, total: null, total_weight: null, note: 'Из Мяунала (без авто-итога)' } : null
           }));
           parsed.foods = [...journalFoodsFormatted, ...parsed.foods];
           parsed.has_food = true;
