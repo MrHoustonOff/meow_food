@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ChevronLeft, Sun, Moon } from 'lucide-react';
 import SecretField from './SecretField';
 import AccentPicker from './AccentPicker';
 import styles from './SettingsPage.module.css';
+import { calcGoals, ACTIVITY_OPTIONS, GOAL_OPTIONS } from '../utils/goals.js';
 
 /*
  * SettingsPage — страница настроек.
@@ -20,6 +21,163 @@ import styles from './SettingsPage.module.css';
  *   accents         — { light: '#...', dark: '#...' }
  *   setAccent       — (forTheme, hex) => void
  */
+
+/* ─── СЕКЦИЯ ЦЕЛЕЙ ──────────────────────────────────────────────── */
+function GoalsSection({ settings, updateField }) {
+  const g = settings.goals || {};
+  const [gender,   setGender]   = useState(g.gender   || 'male');
+  const [weight,   setWeight]   = useState(g.weight   || 80);
+  const [height,   setHeight]   = useState(g.height   || 180);
+  const [age,      setAge]      = useState(g.age      || 21);
+  const [activity, setActivity] = useState(g.activity || 1.375);
+  const [goal,     setGoal]     = useState(g.goal     || 'maintain');
+  const [custom,   setCustom]   = useState({
+    calories: g.custom_calories ?? null,
+    proteins: g.custom_proteins ?? null,
+    fats:     g.custom_fats     ?? null,
+    carbs:    g.custom_carbs    ?? null,
+  });
+
+  const raw = calcGoals({ gender, weight, height, age, activity, goal })._raw;
+
+  const save = (patch) => {
+    const next = { gender, weight, height, age, activity, goal, ...custom, ...patch };
+    updateField('goals', next);
+  };
+
+  const handleBlur = () => {
+    save({
+      custom_calories: custom.calories,
+      custom_proteins: custom.proteins,
+      custom_fats:     custom.fats,
+      custom_carbs:    custom.carbs,
+    });
+  };
+
+  const resetCustom = () => {
+    const c = { calories: null, proteins: null, fats: null, carbs: null };
+    setCustom(c);
+    save({ custom_calories: null, custom_proteins: null, custom_fats: null, custom_carbs: null });
+  };
+
+  const numBtn = (field, setState) => (val) => {
+    setState(val);
+    save({ [field]: val });
+  };
+
+  const disp = (field) => custom[field] ?? raw[field];
+
+  return (
+    <section style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+      <div className={styles.sectionTitle}>🎯 Мои цели</div>
+
+      {/* Пол */}
+      <div className={styles.settingRow}>
+        <span className={styles.settingLabel}>Пол</span>
+        <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+          {[{v:'male',l:'Мужчина'},{v:'female',l:'Женщина'}].map(o => (
+            <button key={o.v}
+              style={{
+                padding: '6px 14px',
+                borderRadius: 'var(--radius-lg)',
+                border: gender === o.v ? 'none' : '1px solid var(--separator)',
+                background: gender === o.v ? 'var(--accent)' : 'transparent',
+                color: gender === o.v ? '#fff' : 'var(--text-secondary)',
+                fontFamily: 'var(--font-round)', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+              }}
+              onClick={() => { setGender(o.v); save({ gender: o.v }); }}
+            >{o.l}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* Вес / Рост / Возраст */}
+      {[
+        { label: 'Вес (кг)', val: weight, set: numBtn('weight', setWeight) },
+        { label: 'Рост (см)', val: height, set: numBtn('height', setHeight) },
+        { label: 'Возраст', val: age, set: numBtn('age', setAge) },
+      ].map(it => (
+        <div key={it.label} className={styles.settingRow}>
+          <span className={styles.settingLabel}>{it.label}</span>
+          <input
+            type="number" inputMode="decimal"
+            style={{ width: 80, padding: '8px 12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--separator)', background: 'var(--bg-app)', color: 'var(--text-primary)', fontFamily: 'var(--font-round)', fontSize: 15, fontWeight: 600, outline: 'none', textAlign: 'right' }}
+            value={it.val}
+            onChange={e => it.set(Number(e.target.value))}
+          />
+        </div>
+      ))}
+
+      {/* Активность */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+        <span className={styles.settingLabel}>Активность</span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
+          {ACTIVITY_OPTIONS.map(o => (
+            <button key={o.value}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '10px 14px', borderRadius: 'var(--radius-lg)',
+                border: activity === o.value ? 'none' : '1px solid var(--separator)',
+                background: activity === o.value ? 'var(--accent)' : 'var(--bg-app)',
+                color: activity === o.value ? '#fff' : 'var(--text-primary)',
+                fontFamily: 'var(--font-round)', fontSize: 14, fontWeight: 600, cursor: 'pointer',
+                textAlign: 'left',
+              }}
+              onClick={() => { setActivity(o.value); save({ activity: o.value }); }}
+            >
+              <span>{o.label}</span>
+              <span style={{ fontSize: 12, opacity: 0.7 }}>{o.hint}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Цель */}
+      <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+        {GOAL_OPTIONS.map(o => (
+          <button key={o.value}
+            style={{
+              flex: 1, padding: '8px 4px', borderRadius: 'var(--radius-lg)',
+              border: goal === o.value ? 'none' : '1px solid var(--separator)',
+              background: goal === o.value ? 'var(--accent)' : 'transparent',
+              color: goal === o.value ? '#fff' : 'var(--text-secondary)',
+              fontFamily: 'var(--font-round)', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+            }}
+            onClick={() => { setGoal(o.value); save({ goal: o.value }); }}
+          >{o.emoji} {o.label}</button>
+        ))}
+      </div>
+
+      {/* Превью целей */}
+      <div style={{ background: 'var(--bg-app)', borderRadius: 'var(--radius-lg)', padding: 'var(--space-4)', display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Рассчитано для вас</span>
+          <button
+            style={{ fontSize: 12, color: 'var(--accent)', background: 'none', border: 'none', fontFamily: 'var(--font-round)', fontWeight: 600, cursor: 'pointer' }}
+            onClick={resetCustom}
+          >Сбросить</button>
+        </div>
+        {[
+          { key: 'calories', label: '🔥 Ккал' },
+          { key: 'proteins', label: '🥩 Белки (г)' },
+          { key: 'fats',     label: '🥑 Жиры (г)' },
+          { key: 'carbs',    label: '🍞 Углеводы (г)' },
+        ].map(it => (
+          <div key={it.key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 'var(--space-2)' }}>
+            <span style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 600 }}>{it.label}</span>
+            <input
+              type="number" inputMode="decimal"
+              style={{ width: 80, padding: '6px 10px', borderRadius: 'var(--radius-md)', border: '1px solid var(--separator)', background: 'var(--bg-surface)', color: 'var(--text-primary)', fontFamily: 'var(--font-round)', fontSize: 15, fontWeight: 700, outline: 'none', textAlign: 'right' }}
+              value={disp(it.key)}
+              onChange={e => setCustom(prev => ({ ...prev, [it.key]: e.target.value === '' ? null : Number(e.target.value) }))}
+              onBlur={handleBlur}
+            />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
 
 /* ─── ПРОВАЙДЕРЫ (расширять здесь) ─────────────────────────────── */
 const PROVIDERS = [
@@ -387,6 +545,9 @@ const SettingsPage = ({
                 Мяувник v1.0
               </span>
             </section>
+
+            {/* ── ЦЕЛИ И ПРОФИЛЬ ─────────────────────────────────── */}
+            <GoalsSection settings={settings} updateField={updateField} />
 
             <div className="bottom-nav-spacer" />
           </div>

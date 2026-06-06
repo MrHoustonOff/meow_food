@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, Sun, Moon, Book } from 'lucide-react';
+import { Settings, Sun, Moon, Book, ChartLine } from 'lucide-react';
 import styles from './Header.module.css';
 
 /*
@@ -13,9 +13,10 @@ import styles from './Header.module.css';
  *   onSettings  — () => void
  *   onJournal   — () => void
  */
-const Header = ({ theme, toggleTheme, onSettings, onJournal }) => {
+const Header = ({ theme, toggleTheme, onSettings, onJournal, onDiary }) => {
   const [settingsPressed, setSettingsPressed] = useState(false);
   const [journalPressed, setJournalPressed] = useState(false);
+  const [diaryPressed, setDiaryPressed] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
   const handleToggleTheme = () => {
@@ -62,6 +63,24 @@ const Header = ({ theme, toggleTheme, onSettings, onJournal }) => {
             strokeWidth={2}
             className={styles.icon}
             style={{ opacity: journalPressed ? 0.6 : 1 }}
+          />
+        </button>
+
+        <button
+          id="btn-diary"
+          className={`${styles.iconButton} pressable no-select glass-mid`}
+          onMouseDown={() => setDiaryPressed(true)}
+          onMouseUp={() => setDiaryPressed(false)}
+          onTouchStart={() => setDiaryPressed(true)}
+          onTouchEnd={() => setDiaryPressed(false)}
+          onClick={onDiary}
+          aria-label="Мяу-Дневник"
+        >
+          <ChartLine
+            size={20}
+            strokeWidth={2}
+            className={styles.icon}
+            style={{ opacity: diaryPressed ? 0.6 : 1 }}
           />
         </button>
 

@@ -11,9 +11,11 @@ import SuccessCopyModal from './components/SuccessCopyModal';
 import TgSuccessModal from './components/TgSuccessModal';
 import Onboarding from './components/Onboarding';
 import JournalPage from './components/JournalPage';
+import DiaryPage from './components/DiaryPage';
 import { Send, Cat, Paperclip, X } from 'lucide-react';
 import { useTheme } from './hooks/useTheme';
 import { useSettings } from './hooks/useSettings';
+import { useDiary } from './hooks/useDiary.js';
 import { complete as llmComplete } from './services/llm/index.js';
 import { buildPrompt, extractAndValidateJSON } from './utils/prompt.js';
 import { send as sendToTg } from './services/telegram.js';
@@ -64,10 +66,13 @@ function App() {
   });
 
   // ── Навигация ──────────────────────────────────────────────────
-  const [view, setView] = useState('home'); // 'home' | 'settings' | 'journal'
+  const [view, setView] = useState('home'); // 'home' | 'settings' | 'journal' | 'diary'
 
   // ── Журнал ─────────────────────────────────────────────────────
   const [selectedJournalFoods, setSelectedJournalFoods] = useState([]);
+
+  // ── Мяу-Дневник ──────────────────────────────────────────────
+  const { entries, addEntry, updateEntry, deleteEntry } = useDiary();
 
   // ── Фаза основного flow ────────────────────────────────────────
   // 'idle' | 'ai_loading' | 'preview' | 'tg_sending'
@@ -446,6 +451,20 @@ function App() {
     );
   }
 
+  // ── Страница Мяу-Дневник ───────────────────────────────────────
+  if (view === 'diary') {
+    return (
+      <DiaryPage
+        onBack={() => setView('home')}
+        entries={entries}
+        addEntry={addEntry}
+        updateEntry={updateEntry}
+        deleteEntry={deleteEntry}
+        settings={settings}
+      />
+    );
+  }
+
   // ── Preview page (phase: preview | tg_sending) ────────────────
   if (phase === 'preview' || phase === 'tg_sending') {
     return (
@@ -456,6 +475,7 @@ function App() {
             toggleTheme={toggleTheme}
             onSettings={() => setView('settings')}
             onJournal={() => setView('journal')}
+            onDiary={() => setView('diary')}
           />
 
           <main className={`scroll-area ${styles.main}`}>
@@ -498,6 +518,7 @@ function App() {
           toggleTheme={toggleTheme}
           onSettings={() => setView('settings')}
           onJournal={() => setView('journal')}
+          onDiary={() => setView('diary')}
         />
 
         <main className={`scroll-area ${styles.main}`}>
