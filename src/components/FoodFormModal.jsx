@@ -4,6 +4,7 @@ import styles from './FoodFormModal.module.css';
 const FoodFormModal = ({ open, initialData, onSave, onCancel }) => {
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
+  const [isExactGrams, setIsExactGrams] = useState(false);
   const [proteins, setProteins] = useState('');
   const [fats, setFats] = useState('');
   const [carbs, setCarbs] = useState('');
@@ -14,6 +15,7 @@ const FoodFormModal = ({ open, initialData, onSave, onCancel }) => {
       if (initialData) {
         setName(initialData.name || '');
         setAmount(initialData.amount || '');
+        setIsExactGrams(initialData.isExactGrams || false);
         setProteins(initialData.macros?.b ?? '');
         setFats(initialData.macros?.f ?? '');
         setCarbs(initialData.macros?.c ?? '');
@@ -21,6 +23,7 @@ const FoodFormModal = ({ open, initialData, onSave, onCancel }) => {
       } else {
         setName('');
         setAmount('');
+        setIsExactGrams(false);
         setProteins('');
         setFats('');
         setCarbs('');
@@ -47,6 +50,7 @@ const FoodFormModal = ({ open, initialData, onSave, onCancel }) => {
       id: initialData?.id || (Date.now().toString() + Math.random().toString(36).substring(2)),
       name: name.trim(),
       amount: amount.trim() || null,
+      isExactGrams,
       macros
     });
   };
@@ -66,13 +70,27 @@ const FoodFormModal = ({ open, initialData, onSave, onCancel }) => {
           />
         </div>
 
+        <div className={styles.switchRow}>
+          <span className={styles.switchLabel}>Ввод в граммах</span>
+          <label className={styles.switch}>
+            <input 
+              type="checkbox" 
+              checked={isExactGrams} 
+              onChange={(e) => setIsExactGrams(e.target.checked)} 
+            />
+            <span className={styles.slider}></span>
+          </label>
+        </div>
+
         <div className={styles.fieldGroup}>
-          <span className={styles.label}>Порция / Вес (опционально)</span>
+          <span className={styles.label}>{isExactGrams ? 'Граммы (опционально)' : 'Порция / Вес (опционально)'}</span>
           <input 
+            type={isExactGrams ? "number" : "text"}
+            inputMode={isExactGrams ? "decimal" : "text"}
             className={styles.input} 
             value={amount} 
             onChange={(e) => setAmount(e.target.value)} 
-            placeholder="1 порция / 200г" 
+            placeholder={isExactGrams ? "150" : "1 порция / 200г"} 
           />
         </div>
 

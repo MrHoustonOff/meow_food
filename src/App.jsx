@@ -256,11 +256,53 @@ function App() {
         
         // Внедрение выбранных блюд из журнала в ответ ИИ
         if (selectedJournalFoods.length > 0) {
-          const journalFoodsFormatted = selectedJournalFoods.map(jf => ({
-            name: jf.name,
-            amount: jf.amount || null,
-            macros: jf.macros ? { per_100g: jf.macros, total: null, total_weight: null, note: 'Из Мяунала (без авто-итога)' } : null
-          }));
+          const journalFoodsFormatted = selectedJournalFoods.map(jf => {
+            const hasMacros = jf.macros !== null;
+            const isExact = jf.isExactGrams === true;
+            let weightNum = NaN;
+            
+            if (jf.amount) {
+              const weightStr = jf.amount.toString().replace(/,/g, '.');
+              weightNum = parseFloat(weightStr);
+            }
+
+            let finalMacros = null;
+            let finalAmount = jf.amount || null;
+
+            if (isExact && hasMacros && !isNaN(weightNum) && weightNum > 0) {
+              const totalMacros = {
+                b: Number(((jf.macros.b * weightNum) / 100).toFixed(1)),
+                f: Number(((jf.macros.f * weightNum) / 100).toFixed(1)),
+                c: Number(((jf.macros.c * weightNum) / 100).toFixed(1)),
+                kcal: Math.round((jf.macros.kcal * weightNum) / 100)
+              };
+              finalMacros = {
+                per_100g: jf.macros,
+                total: totalMacros,
+                total_weight: `${weightNum}г`,
+                note: 'Рассчитано точно по граммам'
+              };
+              finalAmount = `${weightNum}г`;
+            } else if (hasMacros) {
+              finalMacros = {
+                per_100g: jf.macros,
+                total: null,
+                total_weight: null,
+                note: 'Из Мяунала (без авто-итога)'
+              };
+              if (isExact && !isNaN(weightNum) && weightNum > 0) {
+                finalAmount = `${weightNum}г`;
+              }
+            } else if (isExact && !isNaN(weightNum) && weightNum > 0) {
+              finalAmount = `${weightNum}г`;
+            }
+
+            return {
+              name: jf.name,
+              amount: finalAmount,
+              macros: finalMacros
+            };
+          });
           parsed.foods = [...journalFoodsFormatted, ...parsed.foods];
           parsed.has_food = true;
         }

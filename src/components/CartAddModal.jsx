@@ -4,11 +4,13 @@ import styles from './CartAddModal.module.css';
 const CartAddModal = ({ open, initialData, onAdd, onCancel }) => {
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
+  const [isExactGrams, setIsExactGrams] = useState(false);
 
   useEffect(() => {
     if (open && initialData) {
       setName(initialData.name || '');
       setAmount(initialData.amount || '');
+      setIsExactGrams(initialData.isExactGrams || false);
     }
   }, [open, initialData]);
 
@@ -22,6 +24,7 @@ const CartAddModal = ({ open, initialData, onAdd, onCancel }) => {
       cartId: initialData.cartId || (Date.now().toString() + Math.random().toString(36).substring(2)),
       name: name.trim(),
       amount: amount.trim() || null,
+      isExactGrams
     });
   };
 
@@ -40,13 +43,27 @@ const CartAddModal = ({ open, initialData, onAdd, onCancel }) => {
           />
         </div>
 
+        <div className={styles.switchRow}>
+          <span className={styles.switchLabel}>Ввод в граммах</span>
+          <label className={styles.switch}>
+            <input 
+              type="checkbox" 
+              checked={isExactGrams} 
+              onChange={(e) => setIsExactGrams(e.target.checked)} 
+            />
+            <span className={styles.slider}></span>
+          </label>
+        </div>
+
         <div className={styles.fieldGroup}>
-          <span className={styles.label}>Порция / Вес</span>
+          <span className={styles.label}>{isExactGrams ? 'Граммы (опционально)' : 'Порция / Вес'}</span>
           <input 
+            type={isExactGrams ? "number" : "text"}
+            inputMode={isExactGrams ? "decimal" : "text"}
             className={styles.input} 
             value={amount} 
             onChange={(e) => setAmount(e.target.value)} 
-            placeholder="1 порция / 200г" 
+            placeholder={isExactGrams ? "150" : "1 порция / 200г"} 
           />
         </div>
 
