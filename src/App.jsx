@@ -10,6 +10,7 @@ import TgErrorModal from './components/TgErrorModal';
 import SuccessCopyModal from './components/SuccessCopyModal';
 import TgSuccessModal from './components/TgSuccessModal';
 import Onboarding from './components/Onboarding';
+import JournalPage from './components/JournalPage';
 import { Send, Cat, Paperclip, X } from 'lucide-react';
 import { useTheme } from './hooks/useTheme';
 import { useSettings } from './hooks/useSettings';
@@ -63,7 +64,10 @@ function App() {
   });
 
   // ── Навигация ──────────────────────────────────────────────────
-  const [view, setView] = useState('home'); // 'home' | 'settings'
+  const [view, setView] = useState('home'); // 'home' | 'settings' | 'journal'
+
+  // ── Журнал ─────────────────────────────────────────────────────
+  const [selectedJournalFoods, setSelectedJournalFoods] = useState([]);
 
   // ── Фаза основного flow ────────────────────────────────────────
   // 'idle' | 'ai_loading' | 'preview' | 'tg_sending'
@@ -237,7 +241,7 @@ function App() {
 
     setPhase('ai_loading');
 
-    const timestamp = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    const timestamp = new Date().toLocaleString('ru-RU', { weekday: 'long', hour: '2-digit', minute: '2-digit' });
     const messages = buildPrompt(text, timestamp);
 
     let parsed = null;
@@ -249,6 +253,18 @@ function App() {
       try {
         raw = await llmComplete(messages, settings);
         parsed = extractAndValidateJSON(raw);
+        
+        // Внедрение выбранных блюд из журнала в ответ ИИ
+        if (selectedJournalFoods.length > 0) {
+          const journalFoodsFormatted = selectedJournalFoods.map(jf => ({
+            name: jf.name,
+            amount: jf.amount || null,
+            macros: jf.macros ? { per_100g: null, total: jf.macros, total_weight: jf.amount } : null
+          }));
+          parsed.foods = [...journalFoodsFormatted, ...parsed.foods];
+          parsed.has_food = true;
+        }
+
         success = true;
         break; // успех
       } catch (e) {
@@ -282,6 +298,7 @@ function App() {
     setShowBackModal(false);
     setAiResult(null);
     setRawText('');
+    setSelectedJournalFoods([]);
     setPhase('idle');
   };
 
@@ -304,6 +321,7 @@ function App() {
       setText('');
       setAiResult(null);
       setRawText('');
+      setSelectedJournalFoods([]);
       setPhase('idle');
       return;
     }
@@ -319,6 +337,7 @@ function App() {
       setText('');
       setAiResult(null);
       setRawText('');
+      setSelectedJournalFoods([]);
       setPhase('idle');
       setShowTgSuccess(true);
 
@@ -374,6 +393,16 @@ function App() {
     );
   }
 
+  // ── Страница Мяунала ──────────────────────────────────────────
+  if (view === 'journal') {
+    return (
+      <JournalPage 
+        onBack={() => setView('home')}
+        onSelectFood={(food) => setSelectedJournalFoods([...selectedJournalFoods, food])}
+      />
+    );
+  }
+
   // ── Preview page (phase: preview | tg_sending) ────────────────
   if (phase === 'preview' || phase === 'tg_sending') {
     return (
@@ -383,6 +412,7 @@ function App() {
             theme={theme}
             toggleTheme={toggleTheme}
             onSettings={() => setView('settings')}
+            onJournal={() => setView('journal')}
           />
 
           <main className={`scroll-area ${styles.main}`}>
@@ -424,6 +454,7 @@ function App() {
           theme={theme}
           toggleTheme={toggleTheme}
           onSettings={() => setView('settings')}
+          onJournal={() => setView('journal')}
         />
 
         <main className={`scroll-area ${styles.main}`}>
@@ -433,14 +464,35 @@ function App() {
             }`}
           >
 
-            {/* ── АВАТАРКА И ПРИВЕТСТВИЕ ── */}
+            {/* ── АВАТАРКА / ВЫБРАННАЯ ЕДА И ПРИВЕТСТВИЕ ── */}
             <section className={styles.hero}>
-              <div className={`${styles.catAvatar} glass-mid anim-float`}>
-                <Cat size={44} strokeWidth={1.5} className={styles.catIcon} />
-              </div>
-              <p className={`${styles.greeting} text-title-3`}>
-                {greeting}
-              </p>
+              {selectedJournalFoods.length > 0 ? (
+                <div className={styles.selectedJournalContainer} style={{ animation: 'fadeIn 300ms ease' }}>
+                  <h3 className={styles.selectedJournalTitle}>Выбрано из мяунала:</h3>
+                  <div className={styles.selectedJournalList}>
+                    {selectedJournalFoods.map((jf, idx) => (
+                      <div key={`${jf.id}-${idx}`} className={`${styles.selectedJournalItem} glass-mid`}>
+                        <span className={styles.selectedJournalName}>{jf.name}</span>
+                        <button 
+                          className={styles.selectedJournalRemove}
+                          onClick={() => setSelectedJournalFoods(selectedJournalFoods.filter((_, i) => i !== idx))}
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className={`${styles.catAvatar} glass-mid anim-float`} style={{ animation: 'fadeIn 300ms ease' }}>
+                    <Cat size={44} strokeWidth={1.5} className={styles.catIcon} />
+                  </div>
+                  <p className={`${styles.greeting} text-title-3`} style={{ animation: 'fadeIn 300ms ease' }}>
+                    {greeting}
+                  </p>
+                </>
+              )}
             </section>
 
             {/* ── ВВОД ── */}

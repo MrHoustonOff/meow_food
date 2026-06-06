@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, Sun, Moon } from 'lucide-react';
+import { Settings, Sun, Moon, Book } from 'lucide-react';
 import styles from './Header.module.css';
 
 /*
@@ -11,12 +11,32 @@ import styles from './Header.module.css';
  *   theme       — 'light' | 'dark'
  *   toggleTheme — () => void
  *   onSettings  — () => void
+ *   onJournal   — () => void
  */
-const Header = ({ theme, toggleTheme, onSettings }) => {
+const Header = ({ theme, toggleTheme, onSettings, onJournal }) => {
   const [settingsPressed, setSettingsPressed] = useState(false);
+  const [journalPressed, setJournalPressed] = useState(false);
 
   return (
     <header className={styles.header}>
+      <button
+        id="btn-journal"
+        className={`${styles.iconButton} pressable no-select glass-mid`}
+        onMouseDown={() => setJournalPressed(true)}
+        onMouseUp={() => setJournalPressed(false)}
+        onTouchStart={() => setJournalPressed(true)}
+        onTouchEnd={() => setJournalPressed(false)}
+        onClick={onJournal}
+        aria-label="Мяунал еды"
+      >
+        <Book
+          size={20}
+          strokeWidth={2}
+          className={styles.icon}
+          style={{ opacity: journalPressed ? 0.6 : 1 }}
+        />
+      </button>
+
       <button
         id="btn-settings"
         className={`${styles.iconButton} pressable no-select glass-mid`}

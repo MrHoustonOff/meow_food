@@ -68,6 +68,70 @@
   font-weight: 600;
 }
 
+/* ─── ВЫБРАННОЕ ИЗ ЖУРНАЛА ─────────────────────────────────── */
+.selectedJournalContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.selectedJournalTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 0;
+  text-align: left;
+}
+
+.selectedJournalList {
+  display: flex;
+  overflow-x: auto;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.selectedJournalList::-webkit-scrollbar {
+  display: none;
+}
+
+.selectedJournalItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 8px 12px;
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.selectedJournalName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.selectedJournalRemove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background: var(--separator);
+  color: var(--text-secondary);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.selectedJournalRemove:active {
+  opacity: 0.7;
+}
+
 /* ─── ВВОД ──────────────────────────────────────────────────── */
 .inputSection {
   display: flex;
