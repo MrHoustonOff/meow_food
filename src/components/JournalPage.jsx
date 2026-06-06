@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import styles from './JournalPage.module.css';
 import FoodFormModal from './FoodFormModal.jsx';
 import ConfirmDeleteModal from './ConfirmDeleteModal.jsx';
+import CartAddModal from './CartAddModal.jsx';
+import CartModal from './CartModal.jsx';
 
 const ITEMS_PER_PAGE = 10;
 
-const JournalPage = ({ onBack, onSelectFood }) => {
+const JournalPage = ({ onBack, selectedFoods, setSelectedFoods }) => {
   const [foods, setFoods] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -16,6 +18,11 @@ const JournalPage = ({ onBack, onSelectFood }) => {
   const [foodToDelete, setFoodToDelete] = useState(null);
 
   const [page, setPage] = useState(1);
+
+  // Cart state
+  const [cartAddModalOpen, setCartAddModalOpen] = useState(false);
+  const [cartAddFoodTemplate, setCartAddFoodTemplate] = useState(null);
+  const [cartModalOpen, setCartModalOpen] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem('myau_food_journal');
@@ -71,6 +78,30 @@ const JournalPage = ({ onBack, onSelectFood }) => {
     setModalOpen(true);
   };
 
+  const handleOpenCartAdd = (food) => {
+    setCartAddFoodTemplate({ ...food }); // copy
+    setCartAddModalOpen(true);
+  };
+
+  const handleAddToCart = (ephemeralFood) => {
+    // If it has cartId and it's already in selectedFoods, we replace it. 
+    // Wait, the CartAddModal always sets a cartId. If editing an existing cart item:
+    const exists = selectedFoods.some(f => f.cartId === ephemeralFood.cartId);
+    if (exists) {
+      setSelectedFoods(selectedFoods.map(f => f.cartId === ephemeralFood.cartId ? ephemeralFood : f));
+    } else {
+      setSelectedFoods([...selectedFoods, ephemeralFood]);
+    }
+    setCartAddModalOpen(false);
+    setCartAddFoodTemplate(null);
+  };
+
+  const handleEditCartItem = (cartItem) => {
+    setCartModalOpen(false);
+    setCartAddFoodTemplate(cartItem);
+    setCartAddModalOpen(true);
+  };
+
   const filteredFoods = foods.filter(f => 
     f.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -82,6 +113,8 @@ const JournalPage = ({ onBack, onSelectFood }) => {
   useEffect(() => {
     setPage(1);
   }, [searchQuery]);
+
+  const hasCart = selectedFoods.length > 0;
 
   return (
     <div className={styles.page}>
@@ -116,71 +149,71 @@ const JournalPage = ({ onBack, onSelectFood }) => {
                 {searchQuery ? 'Ничего не найдено 😿' : 'Здесь пока нет рыбов...'}
               </div>
             ) : (
-              paginatedFoods.map((food, idx) => (
-                <div key={food.id} className={`${styles.card} glass-mid`}>
-                  <div className={styles.cardHeader}>
-                    <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-                      <span className={styles.foodIndex}>{((page - 1) * ITEMS_PER_PAGE) + idx + 1}.</span>
-                      <div>
-                        <h3 className={styles.foodName}>{food.name}</h3>
-                        {food.amount && <p className={styles.foodAmount}>{food.amount}</p>}
+              paginatedFoods.map((food, idx) => {
+                const addedCount = selectedFoods.filter(f => f.id === food.id).length;
+                return (
+                  <div key={food.id} className={`${styles.card} glass-mid`}>
+                    <div className={styles.cardHeader}>
+                      <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+                        <span className={styles.foodIndex}>{((page - 1) * ITEMS_PER_PAGE) + idx + 1}.</span>
+                        <div>
+                          <h3 className={styles.foodName}>{food.name}</h3>
+                          {food.amount && <p className={styles.foodAmount}>{food.amount}</p>}
+                        </div>
+                      </div>
+                      <div className={styles.actions}>
+                        <button className={styles.actionBtn} onClick={() => openEdit(food)}>
+                          ✏️
+                        </button>
+                        <button className={`${styles.actionBtn} ${styles.deleteBtn}`} onClick={() => requestDelete(food.id)}>
+                          🗑️
+                        </button>
                       </div>
                     </div>
-                    <div className={styles.actions}>
-                      <button className={styles.actionBtn} onClick={() => openEdit(food)}>
-                        ✏️
-                      </button>
-                      <button className={`${styles.actionBtn} ${styles.deleteBtn}`} onClick={() => requestDelete(food.id)}>
-                        🗑️
-                      </button>
-                    </div>
+
+                    {food.macros && (
+                      <div className={styles.macrosRow}>
+                        {food.macros.b !== null && (
+                          <div className={styles.macroItem}>
+                            <span className={styles.macroLabel}>Белки</span>
+                            <span className={styles.macroValue}>{food.macros.b}г</span>
+                          </div>
+                        )}
+                        {food.macros.f !== null && (
+                          <div className={styles.macroItem}>
+                            <span className={styles.macroLabel}>Жиры</span>
+                            <span className={styles.macroValue}>{food.macros.f}г</span>
+                          </div>
+                        )}
+                        {food.macros.c !== null && (
+                          <div className={styles.macroItem}>
+                            <span className={styles.macroLabel}>Углеводы</span>
+                            <span className={styles.macroValue}>{food.macros.c}г</span>
+                          </div>
+                        )}
+                        {food.macros.kcal !== null && (
+                          <div className={styles.macroItem}>
+                            <span className={styles.macroLabel}>Ккал</span>
+                            <span className={styles.macroValue}>{food.macros.kcal}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    <button 
+                      className={`${styles.selectBtn} ${addedCount > 0 ? styles.selectBtnAdded : ''} pressable`} 
+                      onClick={() => handleOpenCartAdd(food)}
+                    >
+                      {addedCount > 0 ? `Добавлено (${addedCount})` : 'Добавить к сообщению'}
+                    </button>
                   </div>
-
-                  {food.macros && (
-                    <div className={styles.macrosRow}>
-                      {food.macros.b !== null && (
-                        <div className={styles.macroItem}>
-                          <span className={styles.macroLabel}>Белки</span>
-                          <span className={styles.macroValue}>{food.macros.b}г</span>
-                        </div>
-                      )}
-                      {food.macros.f !== null && (
-                        <div className={styles.macroItem}>
-                          <span className={styles.macroLabel}>Жиры</span>
-                          <span className={styles.macroValue}>{food.macros.f}г</span>
-                        </div>
-                      )}
-                      {food.macros.c !== null && (
-                        <div className={styles.macroItem}>
-                          <span className={styles.macroLabel}>Углеводы</span>
-                          <span className={styles.macroValue}>{food.macros.c}г</span>
-                        </div>
-                      )}
-                      {food.macros.kcal !== null && (
-                        <div className={styles.macroItem}>
-                          <span className={styles.macroLabel}>Ккал</span>
-                          <span className={styles.macroValue}>{food.macros.kcal}</span>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  <button 
-                    className={`${styles.selectBtn} pressable`} 
-                    onClick={() => {
-                      onSelectFood(food);
-                      onBack();
-                    }}
-                  >
-                    Добавить к сообщению
-                  </button>
-                </div>
-              ))
+                );
+              })
             )}
             
             {/* Пагинация */}
             {totalPages > 1 && (
-              <div className={styles.pagination}>
+              <div className={styles.pagination} style={{ paddingBottom: hasCart ? '80px' : '0' }}>
                 <button 
                   className={`${styles.pageBtn} pressable`} 
                   disabled={page === 1}
@@ -202,9 +235,21 @@ const JournalPage = ({ onBack, onSelectFood }) => {
         </div>
       </div>
 
-      <button className={`${styles.fab} pressable`} onClick={openAdd}>
+      <button className={`${styles.fab} ${hasCart ? styles.fabWithCart : ''} pressable`} onClick={openAdd}>
         +
       </button>
+
+      {hasCart && (
+        <div className={styles.cartBar}>
+          <div className={styles.cartBarInfo} onClick={() => setCartModalOpen(true)}>
+            <span className={styles.cartBarText}>В корзине:</span>
+            <span className={styles.cartBarBadge}>{selectedFoods.length}</span>
+          </div>
+          <button className={styles.cartBarDone} onClick={onBack}>
+            Готово
+          </button>
+        </div>
+      )}
 
       <FoodFormModal 
         open={modalOpen} 
@@ -220,6 +265,24 @@ const JournalPage = ({ onBack, onSelectFood }) => {
         open={deleteModalOpen}
         onConfirm={confirmDelete}
         onCancel={cancelDelete}
+      />
+
+      <CartAddModal 
+        open={cartAddModalOpen}
+        initialData={cartAddFoodTemplate}
+        onAdd={handleAddToCart}
+        onCancel={() => {
+          setCartAddModalOpen(false);
+          setCartAddFoodTemplate(null);
+        }}
+      />
+
+      <CartModal 
+        open={cartModalOpen}
+        cartItems={selectedFoods}
+        onUpdateCart={setSelectedFoods}
+        onEditItem={handleEditCartItem}
+        onClose={() => setCartModalOpen(false)}
       />
     </div>
   );

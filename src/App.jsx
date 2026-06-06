@@ -398,7 +398,8 @@ function App() {
     return (
       <JournalPage 
         onBack={() => setView('home')}
-        onSelectFood={(food) => setSelectedJournalFoods([...selectedJournalFoods, food])}
+        selectedFoods={selectedJournalFoods}
+        setSelectedFoods={setSelectedJournalFoods}
       />
     );
   }

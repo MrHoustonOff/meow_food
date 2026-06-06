@@ -246,6 +246,11 @@
   z-index: 100;
 }
 
+/* Сдвигаем FAB выше, если есть корзина */
+.fabWithCart {
+  bottom: calc(var(--space-6) + max(env(safe-area-inset-bottom, 0px), 16px) + 70px);
+}
+
 .fab:active {
   transform: scale(0.9);
 }
@@ -255,4 +260,74 @@
   color: var(--text-tertiary);
   margin-top: var(--space-8);
   font-size: 14px;
+}
+
+/* ─── КОРЗИНА (Bottom Bar) ─────────────────────────────────────── */
+.cartBar {
+  position: fixed;
+  bottom: max(env(safe-area-inset-bottom, 16px), 16px);
+  left: var(--space-4);
+  right: var(--space-4);
+  background: var(--glass-bg-thick);
+  backdrop-filter: var(--glass-blur-lg);
+  -webkit-backdrop-filter: var(--glass-blur-lg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  z-index: 200;
+  animation: slideUpCart 300ms cubic-bezier(0.3, 1.2, 0.4, 1);
+}
+
+@keyframes slideUpCart {
+  from { transform: translateY(150%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.cartBarInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  flex: 1;
+}
+
+.cartBarText {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text-primary);
+}
+
+.cartBarBadge {
+  background: var(--accent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.cartBarDone {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: opacity 150ms ease;
+}
+
+.cartBarDone:active {
+  opacity: 0.8;
+}
+
+.selectBtnAdded {
+  background: var(--bg-app);
+  color: var(--text-secondary);
+  border: 1px solid var(--separator);
 }
